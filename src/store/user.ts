@@ -1,8 +1,7 @@
 import { Module, VuexModule, Action, Mutation, getModule } from 'vuex-module-decorators';
-import { User } from 'firebase';
+import { User, Unsubscribe } from 'firebase';
 import store from '@/store/index';
 import { auth } from '@/scripts/firebase';
-import { Unsubscribe } from 'firebase';
 
 @Module({ dynamic: true, store, name: 'user', namespaced: true })
 class UserModule extends VuexModule {
