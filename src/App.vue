@@ -9,6 +9,7 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import HeaderView from '@/components/Header.vue';
+import UserModule from '@/store/user';
 
 @Component({
   components: {
@@ -16,6 +17,17 @@ import HeaderView from '@/components/Header.vue';
   },
 })
 export default class App extends Vue {
+  public created() {
+    UserModule.subscribe();
+  }
+
+  get authorized(): boolean {
+    return UserModule.authorized;
+  }
+
+  public destroyed() {
+    UserModule.unsubscribe();
+  }
 }
 </script>
 

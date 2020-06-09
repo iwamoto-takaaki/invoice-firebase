@@ -15,6 +15,11 @@ const routes: RouteConfig[] = [
     name: 'About',
     component: () => import('@/views/About.vue'),
   },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: () => import('@/views/Auth.vue'),
+  },
 ];
 
 const router = new VueRouter({
