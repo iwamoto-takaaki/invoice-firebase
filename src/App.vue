@@ -7,9 +7,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Component } from 'vue-property-decorator';
-import HeaderView from '@/components/Header.vue';
-import UserModule from '@/store/user';
+import { Component } from 'vue-property-decorator'
+import HeaderView from '@/components/Header.vue'
+import store from '@/store/index'
+import UserModule from '@/store/user'
 
 @Component({
   components: {

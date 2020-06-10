@@ -1,12 +1,12 @@
-import { Module, VuexModule, Action, Mutation, getModule } from 'vuex-module-decorators';
+import store from '@/store/index'
+import { Module, VuexModule, Action, Mutation, getModule, MutationAction } from 'vuex-module-decorators';
 import { User, Unsubscribe } from 'firebase';
-import store from '@/store/index';
 import { auth } from '@/scripts/firebase';
 
-@Module({ dynamic: true, store, name: 'user', namespaced: true })
+@Module({ dynamic: true, store, namespaced: true, name: 'user' })
 class UserModule extends VuexModule {
     public get authorized(): boolean {
-        return this.user !== null;
+        return this.user !== null
     }
     public user: User | null | undefined = null;
     private detacher: Unsubscribe | undefined = undefined;
@@ -19,7 +19,7 @@ class UserModule extends VuexModule {
     @Action
     public subscribe() {
         this.detacher = auth.onAuthStateChanged((user) => {
-            this.login(user);
+            this.LOGIN(user);
         });
     }
 
@@ -35,14 +35,9 @@ class UserModule extends VuexModule {
         this.user = user;
     }
 
-    @Action
-    private async login(user: User | null) {
-        await this.LOGIN(user);
-    }
-
     public get name() {
         return this.user?.displayName;
     }
 }
 
-export default getModule(UserModule);
+export default getModule(UserModule)

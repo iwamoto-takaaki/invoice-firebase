@@ -3,10 +3,9 @@
 </template>
 
 <script lang="ts">
-import { authObject, ui } from '@/scripts/firebase';
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
-import user from '@/store/user';
+import { authObject, ui } from '@/scripts/firebase';
 
 @Component
 export default class Auth extends Vue {
