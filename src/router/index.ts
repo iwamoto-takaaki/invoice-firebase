@@ -20,6 +20,11 @@ const routes: RouteConfig[] = [
     name: 'Auth',
     component: () => import('@/views/Auth.vue'),
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/views/Profile.vue'),
+  },
 ];
 
 const router = new VueRouter({

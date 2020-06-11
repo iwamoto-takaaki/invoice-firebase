@@ -1,7 +1,7 @@
 import { Module, VuexModule, getModule, Mutation, Action } from 'vuex-module-decorators'
 import store from '@/store/index'
 import UserModule from '@/store/user'
-import { Unsubscribe } from 'firebase'
+import { Unsubscribe, User } from 'firebase'
 import { db } from '@/scripts/firebase'
 
 export interface Profile {
@@ -10,23 +10,35 @@ export interface Profile {
     email: string;
     phone: string;
     account: string[];
+    detacher: Unsubscribe | undefined;
 }
 
 @Module({ dynamic: true, store, name: 'profile', namespaced: true })
 class ProfileModule extends VuexModule {
-    public data: Profile | null = null;
-    private detacher: Unsubscribe | undefined = undefined;
+    public name: string = '';
+    public detacher: Unsubscribe | undefined;
 
     @Mutation
-    public SET_PROFILE(profile: Profile) {
-        this.data = profile
+    public SET_NAME(name: string) {
+        this.name = name
     }
 
     @Action
-    public subscribe() {
-        this.detacher = db.doc(`${UserModule.user?.uid}/profile`).onSnapshot((doc) => {
-            return doc.data() as Profile;
-        });
+    public async subscribe() {
+        const uid = UserModule.uid
+        if (uid !== null) { return }
+        const docref = db.doc(`${uid}/profile`)
+        const doc = await docref.get()
+
+        if (!doc.exists) {
+            docref.set({} as Profile);
+            this.subscribe()
+            return
+        }
+
+        this.detacher = docref.onSnapshot((d) => {
+            this.SET_NAME((d.data() as Profile).name)
+        })
     }
 
     @Action
