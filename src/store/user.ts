@@ -6,7 +6,6 @@ import { auth } from '@/scripts/firebase';
 
 @Module({ dynamic: true, store, namespaced: true, name: 'user' })
 class UserModule extends VuexModule {
-
     public get name() {
         return this.user?.displayName;
     }

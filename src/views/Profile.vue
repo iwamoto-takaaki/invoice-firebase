@@ -18,6 +18,12 @@ import { db } from '@/scripts/firebase'
 
 @Component
 export default class ProfileView extends Vue {
+    public created() {
+        if (!this.authorized) {
+            this.$router.push('/')
+            return
+        }
+    }
     public get name(): string | null | undefined {
         return UserModule.name
     }

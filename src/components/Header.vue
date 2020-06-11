@@ -7,7 +7,7 @@
             |  | 
             router-link(to="/about") About
             |  | 
-            router-link(to="/profile") Profile
+            router-link(v-if="authorized" to="/profile") Profile
         .login
             .signin-btn(v-if="!authorized")
                 router-link(to="/auth") Sign In
