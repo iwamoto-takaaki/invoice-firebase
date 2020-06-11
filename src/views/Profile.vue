@@ -2,7 +2,7 @@
     section#profile-section
         h1 請求者の情報
         .authed(v-if="this.authorized")
-            p {{ this.name }}
+            p {{ this.profile.name }}
         .unauth(v-else)
             p Loading...
 </template>
@@ -18,14 +18,14 @@ import { db } from '@/scripts/firebase'
 
 @Component
 export default class ProfileView extends Vue {
+    public profile: Profile | null = null;
     public created() {
         if (!this.authorized) {
             this.$router.push('/')
             return
         }
-    }
-    public get name(): string | null | undefined {
-        return UserModule.name
+
+        this.profile = ProfileModule.profile
     }
 
     public get authorized(): boolean {

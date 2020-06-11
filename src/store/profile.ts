@@ -15,29 +15,29 @@ export interface Profile {
 
 @Module({ dynamic: true, store, name: 'profile', namespaced: true })
 class ProfileModule extends VuexModule {
-    public name: string = '';
+    public profile: Profile | null = null
     public detacher: Unsubscribe | undefined;
 
     @Mutation
-    public SET_NAME(name: string) {
-        this.name = name
+    public SET_PROFILE(profile: Profile | null) {
+        this.profile = profile
     }
 
     @Action
     public async subscribe() {
         const uid = UserModule.uid
-        if (uid !== null) { return }
+        if (uid === null) { return }
         const docref = db.doc(`${uid}/profile`)
         const doc = await docref.get()
 
         if (!doc.exists) {
-            docref.set({} as Profile);
+            docref.set({ name: UserModule.name } as Profile);
             this.subscribe()
             return
         }
 
         this.detacher = docref.onSnapshot((d) => {
-            this.SET_NAME((d.data() as Profile).name)
+            this.SET_PROFILE((d.data() as Profile))
         })
     }
 
