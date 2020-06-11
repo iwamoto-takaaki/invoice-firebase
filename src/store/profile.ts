@@ -9,8 +9,17 @@ export interface Profile {
     address: string;
     email: string;
     phone: string;
-    account: string[];
-    detacher: Unsubscribe | undefined;
+    account: string;
+}
+
+const generateProfile = (): Profile => {
+    return {
+        name: '',
+        address: '',
+        email: '',
+        phone: '',
+        account: '',
+    }
 }
 
 @Module({ dynamic: true, store, name: 'profile', namespaced: true })
@@ -31,7 +40,9 @@ class ProfileModule extends VuexModule {
         const doc = await docref.get()
 
         if (!doc.exists) {
-            docref.set({ name: UserModule.name } as Profile);
+            const prof = generateProfile()
+            if (UserModule.name) { prof.name = UserModule.name }
+            docref.set(prof);
             this.subscribe()
             return
         }
@@ -45,7 +56,7 @@ class ProfileModule extends VuexModule {
     public unsubscribe() {
         if (this.detacher) {
             this.detacher();
-          }
+        }
     }
 }
 
