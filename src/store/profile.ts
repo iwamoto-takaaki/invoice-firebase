@@ -2,7 +2,7 @@ import { Module, VuexModule, getModule, Mutation, Action } from 'vuex-module-dec
 import store from '@/store/index'
 import UserModule from '@/store/user'
 import { Unsubscribe, User } from 'firebase'
-import { db } from '@/scripts/firebase'
+import { db, functions } from '@/scripts/firebase'
 
 export interface Profile {
     name: string;
@@ -26,17 +26,23 @@ const generateProfile = (): Profile => {
 class ProfileModule extends VuexModule {
     public profile: Profile | null = null
     public detacher: Unsubscribe | undefined;
+    public hello: string | undefined | any = undefined;
 
     @Mutation
     public SET_PROFILE(profile: Profile | null) {
         this.profile = profile
     }
 
+    @Mutation
+    public SET_HELLO(hello: any) {
+        this.hello = hello
+    }
+
     @Action
     public async subscribe() {
         const uid = UserModule.uid
         if (uid === null) { return }
-        const docref = db.doc(`${uid}/profile`)
+        const docref = db.doc(`profile/${uid}`)
         const doc = await docref.get()
 
         if (!doc.exists) {
@@ -57,6 +63,12 @@ class ProfileModule extends VuexModule {
         if (this.detacher) {
             this.detacher();
         }
+    }
+
+    @Action
+    public async update(profile: Profile) {
+        const update = functions.httpsCallable('updateProfile')
+        this.SET_HELLO((await update(profile)).data)
     }
 }
 

@@ -1,7 +1,7 @@
 <template lang="pug">
     section#profile-section
         h1 請求者の情報
-        form(v-if="this.authorized" @submit.prevent="createEvent")
+        form(v-if="this.authorized" @submit.prevent="updateProfile")
             .field
                 .label
                     lable 名前:
@@ -55,6 +55,10 @@ export default class ProfileView extends Vue {
 
     public get authorized(): boolean {
         return UserModule.authorized
+    }
+
+    public updateProfile() {
+        ProfileModule.update(this.profile as Profile);
     }
 }
 </script>
