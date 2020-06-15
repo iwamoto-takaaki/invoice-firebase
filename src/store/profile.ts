@@ -34,6 +34,11 @@ class ProfileModule extends VuexModule {
     }
 
     @Mutation
+    public SET_DETACHER(detacher: Unsubscribe) {
+        this.detacher = detacher
+    }
+
+    @Mutation
     public SET_HELLO(hello: any) {
         this.hello = hello
     }
@@ -43,19 +48,14 @@ class ProfileModule extends VuexModule {
         const uid = UserModule.uid
         if (uid === null) { return }
         const docref = db.doc(`profile/${uid}`)
-        const doc = await docref.get()
 
-        if (!doc.exists) {
-            const prof = generateProfile()
-            if (UserModule.name) { prof.name = UserModule.name }
-            docref.set(prof);
-            this.subscribe()
-            return
-        }
-
-        this.detacher = docref.onSnapshot((d) => {
+        const detacher = docref.onSnapshot((d) => {
             this.SET_PROFILE((d.data() as Profile))
-        })
+        },
+            (err) => { this.SET_HELLO(err.message) },
+        )
+
+        this.SET_DETACHER(detacher)
     }
 
     @Action
@@ -67,8 +67,13 @@ class ProfileModule extends VuexModule {
 
     @Action
     public async update(profile: Profile) {
-        const update = functions.httpsCallable('updateProfile')
-        this.SET_HELLO((await update(profile)).data)
+        try {
+            const update = functions.httpsCallable('updateProfile')
+            const result = await update(profile)
+            this.SET_HELLO(result)
+        } catch (e) {
+            this.SET_HELLO('error:' + e.message)
+        }
     }
 }
 

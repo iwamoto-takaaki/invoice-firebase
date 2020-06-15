@@ -44,7 +44,10 @@ class UserModule extends VuexModule {
             this.LOGIN(user)
             this.SET_STATUS(user === null ? null : 'Ready')
             ProfileModule.subscribe()
-        })
+        },
+            (err) => { console.error(err) },
+        )
+
         this.SET_DETACHER(detacher)
     }
 

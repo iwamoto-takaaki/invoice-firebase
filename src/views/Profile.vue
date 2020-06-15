@@ -4,27 +4,27 @@
         form(v-if="this.authorized" @submit.prevent="updateProfile")
             .field
                 .label
-                    lable 名前:
+                    label 名前:
                 .input
                     input(type="text" v-model="profile.name" placeholder="名前")
             .field
                 .label
-                    lable 住所:
+                    label 住所:
                 .input
                     input(type="text" v-model="profile.address" placeholder="住所")
             .field
                 .label
-                    lable e-mail:
+                    label e-mail:
                 .input
                     input(type="text" v-model="profile.email" placeholder="e-mail")
             .field
                 .label
-                    lable 電話番号:
+                    label 電話番号:
                 .input
                     input(type="text" v-model="profile.phone" placeholder="電話番号")
             .field
                 .label
-                    lable 銀行口座:
+                    label 銀行口座:
                 .input
                     textarea(v-model="profile.account" placeholder="銀行口座")
             input.submit(type="submit" value="登録")
@@ -50,7 +50,17 @@ export default class ProfileView extends Vue {
             return
         }
 
-        this.profile = ProfileModule.profile
+        if (!ProfileModule.profile) {
+            return
+        }
+
+        this.profile = {
+            name: ProfileModule.profile.name,
+            address: ProfileModule.profile.address,
+            email: ProfileModule.profile.email,
+            phone: ProfileModule.profile.phone,
+            account: ProfileModule.profile.account,
+        }
     }
 
     public get authorized(): boolean {
