@@ -62,14 +62,17 @@ export default class CustomersView extends Vue {
     }
 
     private async add() {
-        this.newCustomerUploading = true
-        await CustomersModule.add({
-            id: '',
-            name: this.newCustomer.name,
-        })
+        try {
+            this.newCustomerUploading = true
+            await CustomersModule.add({
+                id: '',
+                name: this.newCustomer.name,
+            })
 
-        this.newCustomer = this.initCustomer()
-        this.newCustomerUploading = false
+            this.newCustomer = this.initCustomer()
+        } finally {
+            this.newCustomerUploading = false
+        }
     }
 
     private update(customer: Customer) {

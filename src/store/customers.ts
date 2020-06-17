@@ -46,6 +46,7 @@ class CustomersModule extends VuexModule {
         if (!UserModule.authorized) { return }
 
         const detacher = this.collectionRef
+            .orderBy('createdAt')
             .onSnapshot((snapshot: any) => {
                 const docs = snapshot.docs.map((doc: any) => {
                     return Object.assign(doc.data(), { id: doc.id }) as Customer[];

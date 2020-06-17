@@ -17,6 +17,7 @@ export const updateProfile = functions.https.onCall((data, context) => {
 export const addCustomer = functions.https.onCall((data, context) => {
     const uid = getUid(context)
     if (!uid) { throw new Error('not authoricated!') }
+    data.createdAt = admin.firestore.Timestamp.now()
     return admin.firestore().collection(`customers/${uid}/list`).add(data)
 })
 
