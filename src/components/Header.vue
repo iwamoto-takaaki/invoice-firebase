@@ -8,6 +8,8 @@
             router-link(to="/about") About
             |  | 
             router-link(v-if="authorized" to="/profile") Profile
+            |  | 
+            router-link(v-if="authorized" to="/customers") Customers
         .login
             .signin-btn(v-if="!authorized")
                 router-link(to="/auth") Sign In

@@ -1,8 +1,9 @@
 import store from '@/store/index'
-import ProfileModule from '@/store/profile'
 import { Module, VuexModule, Action, Mutation, getModule, MutationAction } from 'vuex-module-decorators';
 import { User, Unsubscribe } from 'firebase';
 import { auth } from '@/scripts/firebase';
+import ProfileModule from '@/store/profile'
+import CustomersModule from '@/store/customers'
 
 @Module({ dynamic: true, store, namespaced: true, name: 'user' })
 class UserModule extends VuexModule {
@@ -44,6 +45,7 @@ class UserModule extends VuexModule {
             this.LOGIN(user)
             this.SET_STATUS(user === null ? null : 'Ready')
             ProfileModule.subscribe()
+            CustomersModule.subscribe()
         },
             (err) => { console.error(err) },
         )

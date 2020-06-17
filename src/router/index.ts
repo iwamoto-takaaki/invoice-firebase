@@ -25,6 +25,11 @@ const routes: RouteConfig[] = [
     name: 'Profile',
     component: () => import('@/views/Profile.vue'),
   },
+  {
+    path: '/customers',
+    name: 'Customers',
+    component: () => import('@/views/Customers.vue'),
+  },
 ];
 
 const router = new VueRouter({
