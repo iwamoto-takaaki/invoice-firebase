@@ -9,12 +9,14 @@
             v-on:remove="remove"
             )
         form(v-if="this.authorized" @submit.prevent="add")
-            .field
+            .field(v-if="!this.newCustomerUploading")
                 .label
                     label 顧客名:
                 .input
                     input(type="text" v-model="newCustomer.name" placeholder="顧客名")
-            input.submit(type="submit" value="登録" v-bind:disable="this.idVeridNewCustomer")
+                input.submit(type="submit" value="登録" v-bind:disable="this.idVeridNewCustomer")
+            .updating(v-else)
+                p Now Uploading...
         .unauth(v-else)
             p Loading...
 </template>
@@ -37,6 +39,7 @@ import { db } from '@/scripts/firebase'
 })
 export default class CustomersView extends Vue {
     public newCustomer: Customer = this.initCustomer();
+    public newCustomerUploading: boolean = false;
 
     private initCustomer(): Customer {
         return {id: '', name: ''}
@@ -59,12 +62,14 @@ export default class CustomersView extends Vue {
     }
 
     private async add() {
+        this.newCustomerUploading = true
         await CustomersModule.add({
             id: '',
             name: this.newCustomer.name,
         })
 
         this.newCustomer = this.initCustomer()
+        this.newCustomerUploading = false
     }
 
     private update(customer: Customer) {
