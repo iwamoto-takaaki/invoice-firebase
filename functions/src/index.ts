@@ -2,12 +2,6 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 admin.initializeApp();
 
-
-
-export const helloWorld = functions.https.onCall((data, context) => {
-    return {data: 'hello world'}
-})
-
 const getUid = (context: functions.https.CallableContext): string | null => {
     if (!context.auth) { return null }
     if (!context.auth.uid) { return null }
@@ -23,17 +17,17 @@ export const updateProfile = functions.https.onCall((data, context) => {
 export const addCustomer = functions.https.onCall((data, context) => {
     const uid = getUid(context)
     if (!uid) { throw new Error('not authoricated!') }
-    return admin.firestore().doc(`customers/${uid}`).create(data)
+    return admin.firestore().collection(`customers/${uid}/list`).add(data)
 })
 
 export const updateCustomer = functions.https.onCall((data, context) => {
     const uid = getUid(context)
     if (!uid) { throw new Error('not authoricated!') }
-    return admin.firestore().doc(`customers/${uid}/${data.id}`).update(data)
+    return admin.firestore().doc(`customers/${uid}/list/${data.id}`).update(data)
 })
 
 export const deleteCustomer = functions.https.onCall((data, context) => {
     const uid = getUid(context)
     if (!uid) { throw new Error('not authoricated!') }
-    return admin.firestore().doc(`customers/${uid}/${data.id}`).delete()
+    return admin.firestore().doc(`customers/${uid}/list/${data.id}`).delete()
 })

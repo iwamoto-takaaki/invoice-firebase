@@ -4,7 +4,7 @@
         .edit(v-else)
             input(type="text" v-model="this.customer.name")
             .buttom 変更 
-        font-awesome-icon(icon="trash" @click='remove')
+        font-awesome-icon(icon="trash" @click="remove")
 </template>
 <script lang="ts">
 import Vue from 'vue'

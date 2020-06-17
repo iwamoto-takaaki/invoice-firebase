@@ -19,8 +19,11 @@ class CommonMudule extends VuexModule {
     }
 
     @Action
-    public setFirebaseResult(from: string, method: string, firebaseResult: firebase.functions.HttpsCallableResult) {
-        this.SET_FIREBASE_RESULT({ from, method, firebaseResult} as FirebaseResult)
+    public setFirebaseResult(
+        from: string,
+        method: string,
+        firebaseResult: firebase.functions.HttpsCallableResult | null) {
+        this.SET_FIREBASE_RESULT({ from, method, firebaseResult } as FirebaseResult)
     }
 }
 

@@ -2,7 +2,7 @@
     section#customers-section
         h1 顧客の情報
         customerComponent(
-            v-for="customer in this.data" 
+            v-for="customer in customers" 
             :customer="customer"
             :key="customer.id"
             v-on:update="updata"
@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component, Provide } from 'vue-property-decorator'
+import { Component, Provide, Prop } from 'vue-property-decorator'
 import store from '@/store/index'
 import UserModule from '@/store/user'
 import CustomersModule, { Customer } from '@/store/customers'
@@ -36,12 +36,7 @@ import { db } from '@/scripts/firebase'
     },
 })
 export default class CustomersView extends Vue {
-    @Provide()　public data: Customer[] | null = []
     public newCustomer: Customer = this.initCustomer();
-
-    public created() {
-        this.data = CustomersModule.data
-    }
 
     private initCustomer(): Customer {
         return {id: '', name: ''}
@@ -58,12 +53,18 @@ export default class CustomersView extends Vue {
         return UserModule.authorized
     }
 
+    private get customers(): Customer[] {
+        if (!CustomersModule.data) { return [] }
+        return CustomersModule.data
+    }
+
     private async add() {
         await CustomersModule.add({
             id: '',
             name: this.newCustomer.name,
         })
-        this.newCustomer = this.initCustomer();
+
+        this.newCustomer = this.initCustomer()
     }
 
     private update(customer: Customer) {

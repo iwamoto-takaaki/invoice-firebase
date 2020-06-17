@@ -4,11 +4,14 @@ import UserModule from '@/store/user'
 import common from '@/store/common'
 import { Unsubscribe } from 'firebase'
 import { db, functions } from '@/scripts/firebase'
-import { ActionTree } from 'vuex'
 
 export interface Customer {
     id: string;
     name: string;
+}
+
+const getHttpsCallable = (method: 'add' | 'update' | 'delete'): firebase.functions.HttpsCallable => {
+    return functions.httpsCallable(method + 'Customer')
 }
 
 @Module({ dynamic: true, store, name: 'customers', namespaced: true })
@@ -74,9 +77,9 @@ class CustomersModule extends VuexModule {
     @Action
     public async add(data: Customer) {
         try {
-            const add = functions.httpsCallable('addCustomers')
+            const add = functions.httpsCallable('addCustomer')
             const result = await add(data)
-            common.setFirebaseResult('coutomers', 'add', result)
+            await common.setFirebaseResult('coutomers', 'add', result)
         } catch (e) {
             common.setFirebaseResult('coutomers', 'add', e)
         }
@@ -84,19 +87,15 @@ class CustomersModule extends VuexModule {
 
     @Action
     public async delete(data: Customer) {
-        this.callFirebaseMethod('delete', data)
-    }
-
-    private async callFirebaseMethod(method: string, data: Customer) {
-        const classname = 'customers'
         try {
-            const callable = functions.httpsCallable(method + classname.toUpperCase())
-            const result = await callable(data)
-            common.setFirebaseResult(classname, method, result)
+            const update = functions.httpsCallable('deleteCustomer')
+            const result = await update(data)
+            common.setFirebaseResult('coutomers', 'delete', result)
         } catch (e) {
-            common.setFirebaseResult(classname, method, e)
+            common.setFirebaseResult('coutomers', 'delete', e)
         }
     }
 }
+
 
 export default getModule(CustomersModule)
