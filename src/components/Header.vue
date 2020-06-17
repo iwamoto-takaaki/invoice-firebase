@@ -1,21 +1,18 @@
 <template lang="pug">
     #header-section
         .title
-            h1 請求書作成ツール
-        .links
-            router-link(to="/") Home
-            |  | 
-            router-link(to="/about") About
-            |  | 
-            router-link(v-if="authorized" to="/profile") Profile
-            |  | 
-            router-link(v-if="authorized" to="/customers") Customers
-        .login
-            .signin-btn(v-if="!authorized")
-                router-link(to="/auth") Sign In
-            .signout(v-else)
-                .name login: {{ userName }} {{ uid }}
-                .singout-btn(@click="signOut") Sign out
+            h1 請 求 書
+        .nav
+            .links
+                router-link(to="/") Home
+                router-link(to="/about") About
+                router-link(v-if="authorized" to="/profile") Profile
+                router-link(v-if="authorized" to="/customers") Customers
+            .login
+                .signin-btn(v-if="!authorized")
+                    router-link.button(to="/auth") Sign In
+                .signout(v-else)
+                    .singout-btn.button(@click="signOut") Sign out
 </template>
 
 <script lang="ts">
@@ -44,3 +41,48 @@ export default class HeaderView extends Vue {
     }
 }
 </script>
+
+<style lang="sass" scoped>
+#header-section
+    .title
+        background-color: #222
+        color: #bbb
+
+    .nav
+        display: grid
+        grid-template-areas: "right center left"
+        grid-template-columns: 2fr 5fr 2fr
+        background-color: #555
+        padding: 1rem 1rem
+        color: #59BD7C
+
+        a
+            padding: .5rem 1rem
+            color: inherit
+            font-weight: bold
+
+            &.router-link-exact-active 
+                color: #42b983
+
+        .links
+            grid-area: center
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            align-items: center;
+
+        .login
+            grid-area: left
+
+            .signin-btn, .signout
+                display: flex
+                flex-derection: row
+
+            .button
+                margin-left: auto
+                padding: .5rem 1rem
+                border: 1px solid
+                border-color: #59BD7C
+                border-radius: .3rem
+                color: #59BD7C
+</style>
