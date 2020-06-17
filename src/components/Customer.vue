@@ -1,10 +1,13 @@
 <template lang="pug">
-    .Customer
-        .content(v-if="!this.isEditMode") {{ customer.name }} 
-        .edit(v-else)
-            input(type="text" v-model="this.customer.name")
-            .buttom 変更 
-        font-awesome-icon(icon="trash" @click="remove")
+    .messageCard
+        .normal-mode(v-if="!this.isEditMode")
+            .content(v-if="!this.isEditMode") {{ customer.name }} 
+            font-awesome-icon.edit-btn.button(icon="edit" @click="isEditMode=true")
+            font-awesome-icon.delete-btn.button(icon="times" @click="remove")
+        .edit-mode(v-else)
+            .input
+                input(type="text" v-model="customer.name")
+            font-awesome-icon.save-btn.button(icon="save" @click="update")
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -13,29 +16,40 @@ import { Customer } from '@/store/customers'
 
 @Component
 export default class MessageCardComponent extends Vue {
-    @Prop() public customer!: Customer;
+    @Prop() public customer!: Customer
+    private removing: boolean = false
+    private isEditMode: boolean = false
 
     @Emit() public remove() {
+        if (this.removing) { return }
+        this.removing = true
         return this.customer;
     }
 
     @Emit() public update() {
+        this.isEditMode = false
         return this.customer
-    }
-
-    public get isEditMode() {
-        return false
     }
 }
 </script>
 
 <style lang="sass" scoped>
 .messageCard
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    .normal-mode, .edit-mode 
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
 
-    .content
-        padding: 0.5rem 2rem;
+        .content, .button
+            padding: 0.5rem 1rem;
+
+    .normal-mode
+        .delete-btn
+            color: red
+        .edit-btn
+            color: green
+    .edit-mode
+        .save-btn
+            color: green
 </style>

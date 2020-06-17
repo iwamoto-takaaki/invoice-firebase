@@ -8,17 +8,15 @@
             v-on:update="updata"
             v-on:remove="remove"
             )
-        form(v-if="this.authorized" @submit.prevent="add")
-            .field(v-if="!this.newCustomerUploading")
-                .label
-                    label 顧客名:
-                .input
-                    input(type="text" v-model="newCustomer.name" placeholder="顧客名")
-                input.submit(type="submit" value="登録" v-bind:disable="this.idVeridNewCustomer")
-            .updating(v-else)
-                p Now Uploading...
-        .unauth(v-else)
-            p Loading...
+        .field(v-if="!this.newCustomerUploading")
+            .label
+                label - 新規登録 -
+            .input
+                input(type="text" v-model="newCustomer.name" placeholder="顧客名")
+            font-awesome-icon.save-btn.button(icon="save" @click="add")
+            submit
+        .updating(v-else)
+            p Now Uploading...
 </template>
 
 <script lang="ts">
@@ -63,10 +61,12 @@ export default class CustomersView extends Vue {
 
     private async add() {
         try {
+            if (!this.idVeridNewCustomer) { return }
+
             this.newCustomerUploading = true
             await CustomersModule.add({
                 id: '',
-                name: this.newCustomer.name,
+                name: this.newCustomer.name.trim(),
             })
 
             this.newCustomer = this.initCustomer()
@@ -86,6 +86,7 @@ export default class CustomersView extends Vue {
     private get idVeridNewCustomer(): boolean {
         if　(!this.newCustomer) { return false }
         if　(!this.newCustomer.name) { return false }
+        if　(this.newCustomer.name.trim() === '') { return false }
         return true;
     }
 }
