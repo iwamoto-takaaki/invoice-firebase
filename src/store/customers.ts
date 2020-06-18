@@ -14,27 +14,28 @@ const getHttpsCallable = (method: 'add' | 'update' | 'delete'): firebase.functio
     return functions.httpsCallable(method + 'Customer')
 }
 
-const callFirebaseFunction = (method: 'add' | 'update' | 'delete', data: Customer): Promise<void>  => {
-    return new Promise(async (res, req) => {
+const callFirebaseFunction = (method: 'add' | 'update' | 'delete', data: Customer)
+    : Promise<firebase.functions.HttpsCallableResult>  => {
+    return new Promise(async (res, rej) => {
         try {
             const callable = getHttpsCallable(method)
             const result = await callable(data)
-            await common.setFirebaseResult('coutomers', method, result)
+            res(result)
         } catch (e) {
-            common.setFirebaseResult('coutomers', method, e)
+            rej(e)
         }
     })
 }
 
 @Module({ dynamic: true, store, name: 'customers', namespaced: true })
 class CustomersModule extends VuexModule {
-    public data: Customer[] | null = null
-    public detacher: Unsubscribe | undefined;
 
     private get collectionRef(): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> {
         const uid = UserModule.uid
         return db.collection(`customers/${uid}/list`)
     }
+    public data: Customer[] | null = null
+    public detacher: Unsubscribe | undefined;
 
     @Mutation
     public REFLESH(data: Customer[] | null) {
@@ -71,17 +72,32 @@ class CustomersModule extends VuexModule {
 
     @Action
     public async update(data: Customer) {
-        await callFirebaseFunction('update', data)
+        this.UPDATE(data)
+    }
+
+    @Mutation
+    public ADD(data: Customer) {
+        callFirebaseFunction('add', data)
     }
 
     @Action
     public async add(data: Customer) {
-        await callFirebaseFunction('add', data)
+        this.ADD(data)
     }
 
     @Action
     public async delete(data: Customer) {
-        await callFirebaseFunction('delete', data)
+        this.DELETE(data)
+    }
+
+    @Mutation
+    private UPDATE(data: Customer) {
+        callFirebaseFunction('update', data)
+    }
+
+    @Mutation
+    private DELETE(data: Customer) {
+        callFirebaseFunction('delete', data)
     }
 }
 

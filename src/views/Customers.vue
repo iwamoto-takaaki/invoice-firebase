@@ -5,7 +5,7 @@
             v-for="customer in customers" 
             :customer="customer"
             :key="customer.id"
-            v-on:update="updata"
+            v-on:update="update"
             v-on:remove="remove"
             )
         .field(v-if="!this.newCustomerUploading")
@@ -97,7 +97,7 @@ export default class CustomersView extends Vue {
 #customers-section
     h1
         margin-top: 1rem
-        
+
     .field
         margin-top: 1rem
         display: grid

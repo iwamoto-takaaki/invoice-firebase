@@ -24,7 +24,8 @@ export const addCustomer = functions.https.onCall((data, context) => {
 export const updateCustomer = functions.https.onCall((data, context) => {
     const uid = getUid(context)
     if (!uid) { throw new Error('not authoricated!') }
-    return admin.firestore().doc(`customers/${uid}/list/${data.id}`).update(data)
+    console.log(data)
+    return admin.firestore().doc(`customers/${uid}/list/${data.id}`).set(data)
 })
 
 export const deleteCustomer = functions.https.onCall((data, context) => {
