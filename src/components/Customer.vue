@@ -33,7 +33,9 @@ export default class MessageCardComponent extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
+@import 'src/style'
+
 .messageCard
     .normal-mode, .edit-mode 
         display: flex;
@@ -46,10 +48,10 @@ export default class MessageCardComponent extends Vue {
 
     .normal-mode
         .delete-btn
-            color: red
+            color: $red
         .edit-btn
-            color: green
+            color: $green
     .edit-mode
         .save-btn
-            color: green
+            color: $green
 </style>

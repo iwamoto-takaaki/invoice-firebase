@@ -14,20 +14,26 @@ const getHttpsCallable = (method: 'add' | 'update' | 'delete'): firebase.functio
     return functions.httpsCallable(method + 'Customer')
 }
 
+const callFirebaseFunction = (method: 'add' | 'update' | 'delete', data: Customer): Promise<void>  => {
+    return new Promise(async (res, req) => {
+        try {
+            const callable = getHttpsCallable(method)
+            const result = await callable(data)
+            await common.setFirebaseResult('coutomers', method, result)
+        } catch (e) {
+            common.setFirebaseResult('coutomers', method, e)
+        }
+    })
+}
+
 @Module({ dynamic: true, store, name: 'customers', namespaced: true })
 class CustomersModule extends VuexModule {
     public data: Customer[] | null = null
     public detacher: Unsubscribe | undefined;
-    public status: string | null = null;
 
     private get collectionRef(): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> {
         const uid = UserModule.uid
         return db.collection(`customers/${uid}/list`)
-    }
-
-    @Mutation
-    public SET_STATUS(status: string) {
-        this.status = status
     }
 
     @Mutation
@@ -42,7 +48,6 @@ class CustomersModule extends VuexModule {
 
     @Action
     public async subscribe() {
-        this.SET_STATUS('call subscribe')
         if (!UserModule.authorized) { return }
 
         const detacher = this.collectionRef
@@ -66,37 +71,18 @@ class CustomersModule extends VuexModule {
 
     @Action
     public async update(data: Customer) {
-        try {
-            const update = functions.httpsCallable('updateCustomers')
-            const result = await update(data)
-            common.setFirebaseResult('coutomers', 'update', result)
-        } catch (e) {
-            common.setFirebaseResult('coutomers', 'update', e)
-        }
+        await callFirebaseFunction('update', data)
     }
 
     @Action
     public async add(data: Customer) {
-        try {
-            const add = functions.httpsCallable('addCustomer')
-            const result = await add(data)
-            await common.setFirebaseResult('coutomers', 'add', result)
-        } catch (e) {
-            common.setFirebaseResult('coutomers', 'add', e)
-        }
+        await callFirebaseFunction('add', data)
     }
 
     @Action
     public async delete(data: Customer) {
-        try {
-            const update = functions.httpsCallable('deleteCustomer')
-            const result = await update(data)
-            common.setFirebaseResult('coutomers', 'delete', result)
-        } catch (e) {
-            common.setFirebaseResult('coutomers', 'delete', e)
-        }
+        await callFirebaseFunction('delete', data)
     }
 }
-
 
 export default getModule(CustomersModule)
