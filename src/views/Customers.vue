@@ -1,6 +1,6 @@
 <template lang="pug">
     section#customers-section
-        h1 顧客の情報
+        h1 顧客一覧
         customerComponent(
             v-for="customer in customers" 
             :customer="customer"
@@ -10,11 +10,10 @@
             )
         .field(v-if="!this.newCustomerUploading")
             .label
-                label - 新規登録 -
+                label 登録: 
             .input
                 input(type="text" v-model="newCustomer.name" placeholder="顧客名")
-            font-awesome-icon.save-btn.button(icon="save" @click="add")
-            submit
+                font-awesome-icon.save-btn.button(icon="save" @click="add")
         .updating(v-else)
             p Now Uploading...
 </template>
@@ -92,8 +91,13 @@ export default class CustomersView extends Vue {
 }
 </script>
 
-<style lang="sass" scoped>
-#profile-section
+<style lang="sass">
+@import 'src/style'
+
+#customers-section
+    h1
+        margin-top: 1rem
+        
     .field
         margin-top: 1rem
         display: grid
@@ -111,7 +115,7 @@ export default class CustomersView extends Vue {
 
             input, textarea
                 width: 15rem
-    .submit
-        margin-top: 2rem
-        padding: 0.5rem 3rem
+
+            .save-btn
+                color: $green
 </style>
