@@ -43,17 +43,16 @@ export default class HeaderView extends Vue {
 </script>
 
 <style lang="sass" scoped>
-$green: #59BD7C
-$sky: #59B5BD
-$bule: #4986B3
-$red: #B35D5B
+@import 'src/style'
 
 #header-section
     .title
         background-color: #111
         color: #bbb
-        padding: .5rem
+        padding: 1rem
 
+        h1
+            display: inline
     .nav
         display: grid
         grid-template-areas: "right center left"

@@ -33,15 +33,6 @@ export default class App extends Vue {
 </script>
 
 <style lang="sass">
-body, div, h1, h2, h3, h4, h5, h6
-  padding: 0
-  margin: 0
-
-$green: #59BD7C
-$sky: #59B5BD
-$bule: #4986B3
-$red: #B35D5B
-
 #app
   font-family: Avenir, Helvetica, Arial, sans-serif
   -webkit-font-smoothing: antialiased
