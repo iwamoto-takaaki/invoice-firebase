@@ -8,7 +8,7 @@
             v-on:update="update"
             v-on:remove="remove"
             )
-        .field(v-if="!this.newCustomerUploading")
+        .field(v-if="!newCustomerUploading")
             .label
                 label 登録: 
             .input
@@ -92,7 +92,7 @@ export default class CustomersView extends Vue {
 </script>
 
 <style lang="sass">
-@import 'src/style'
+@import 'src/sass/style'
 
 #customers-section
     h1

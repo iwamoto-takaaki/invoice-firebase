@@ -1,5 +1,5 @@
 <template lang="pug">
-    .messageCard
+    .customer-row
         .normal-mode(v-if="!this.isEditMode")
             .content(v-if="!this.isEditMode") {{ customer.name }} 
             font-awesome-icon.edit-btn.button(icon="edit" @click="isEditMode=true")
@@ -34,7 +34,7 @@ export default class MessageCardComponent extends Vue {
 </script>
 
 <style lang="sass">
-@import 'src/style'
+@import 'src/sass/style'
 
 .messageCard
     .normal-mode, .edit-mode 

@@ -8,6 +8,7 @@
                 router-link(to="/about") About
                 router-link(v-if="authorized" to="/profile") Profile
                 router-link(v-if="authorized" to="/customers") Customers
+                router-link(v-if="authorized" to="/orders") Orders
             .login
                 .signin-btn(v-if="!authorized")
                     router-link.button(to="/auth") Sign In
@@ -43,7 +44,7 @@ export default class HeaderView extends Vue {
 </script>
 
 <style lang="sass" scoped>
-@import 'src/style'
+@import 'src/sass/style'
 
 #header-section
     .title

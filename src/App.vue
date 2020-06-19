@@ -33,7 +33,7 @@ export default class App extends Vue {
 </script>
 
 <style lang="sass">
-@import 'src/style'
+@import 'src/sass/style'
 
 #app
   font-family: Avenir, Helvetica, Arial, sans-serif
