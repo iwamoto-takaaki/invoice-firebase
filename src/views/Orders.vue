@@ -10,27 +10,16 @@
             v-on:add="add"
             v-on:update="updata"
             v-on:remove="remove"
-            ) 
-        .field
-        p {{ selected }}
-        .order-row(v-if="!this.neworderUploading")
-            .customer-name.order-column
-                input(type="text" placeholder="依頼者" v-model="neworder.customerName")
-                select(v-model="neworder.customerId" v-on:change="onCustomerSelectChanged")
-                    option(value="") - 依頼者 -
-                    option(v-for="customer in customers" :key="customer.id" v-model="neworder.customerId" v-bind:value="customer.id") {{ customer.name }}
-            .order-date.order-column
-                input(type="date" v-model="neworder.orderDate" placeholder="依頼日")
-            .title.order-column
-                input(type="text" v-model="neworder.title" placeholder="内容")
-            .unit-price.order-column
-                input(type="text" v-model="neworder.unitPrice" placeholder="単価")
-            .quantity.order-column
-                input(type="text" v-model="neworder.quantity" placeholder="数量")
-            .buttons.order-column
-                font-awesome-icon.save-btn.button(icon="save" @click="add")
-        .updating(v-else)
-            p Now Uploading...
+        ) 
+        hr
+        OrderComponent(
+            :order="neworder"
+            :customers="customers"
+            :isEditMode="true"
+            v-on:add="add"
+            v-on:update="updata"
+            v-on:remove="remove"
+        )
 </template>
 
 <script lang="ts">
@@ -52,7 +41,6 @@ import { db } from '@/scripts/firebase'
 })
 export default class OrdersView extends Vue {
     public neworder: Order = this.initOrder()
-    public neworderUploading: boolean = false
 
     public data = [{
             id: '1',
@@ -146,13 +134,6 @@ export default class OrdersView extends Vue {
 
     private remove(order: Order) {
         this.data = this.data.filter((o) => order.id !== o.id)
-    }
-
-    private get idVeridNeworder(): boolean {
-        // if　(!this.neworder) { return false }
-        // if　(!this.neworder.name) { return false }
-        // if　(this.neworder.name.trim() === '') { return false }
-        return true;
     }
 }
 </script>
