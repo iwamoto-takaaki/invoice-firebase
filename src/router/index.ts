@@ -30,6 +30,11 @@ const routes: RouteConfig[] = [
     name: 'Customers',
     component: () => import('@/views/Customers.vue'),
   },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: () => import('@/views/Orders.vue'),
+  },
 ];
 
 const router = new VueRouter({
