@@ -1,7 +1,6 @@
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
 import store from '@/store/index'
 import UserModule from '@/store/user'
-import common from '@/store/common'
 import { Unsubscribe } from 'firebase'
 import { db, functions } from '@/scripts/firebase'
 
