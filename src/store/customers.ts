@@ -9,23 +9,6 @@ export interface Customer {
     name: string;
 }
 
-const getHttpsCallable = (method: 'add' | 'update' | 'delete'): firebase.functions.HttpsCallable => {
-    return functions.httpsCallable(method + 'Customer')
-}
-
-const callFirebaseFunction = (method: 'add' | 'update' | 'delete', data: Customer)
-    : Promise<firebase.functions.HttpsCallableResult>  => {
-    return new Promise(async (res, rej) => {
-        try {
-            const callable = getHttpsCallable(method)
-            const result = await callable(data)
-            res(result)
-        } catch (e) {
-            rej(e)
-        }
-    })
-}
-
 @Module({ dynamic: true, store, name: 'customers', namespaced: true })
 class CustomersModule extends VuexModule {
 
@@ -35,6 +18,12 @@ class CustomersModule extends VuexModule {
     }
     public data: Customer[] | null = null
     public detacher: Unsubscribe | undefined;
+
+    @Mutation
+    public ADD(data: Customer) {
+        const callable = functions.httpsCallable('addCustomer')
+        callable(data)
+    }
 
     @Mutation
     public REFLESH(data: Customer[] | null) {
@@ -70,33 +59,30 @@ class CustomersModule extends VuexModule {
     }
 
     @Action
-    public async update(data: Customer) {
-        this.UPDATE(data)
-    }
-
-    @Mutation
-    public ADD(data: Customer) {
-        callFirebaseFunction('add', data)
+    public async add(data: Customer) {
+        await this.ADD(data)
     }
 
     @Action
-    public async add(data: Customer) {
-        this.ADD(data)
+    public async update(data: Customer) {
+        await this.UPDATE(data)
     }
 
     @Action
     public async delete(data: Customer) {
-        this.DELETE(data)
+        await this.DELETE(data)
     }
 
     @Mutation
     private UPDATE(data: Customer) {
-        callFirebaseFunction('update', data)
+        const callable = functions.httpsCallable('updateCustomer')
+        callable(data)
     }
 
     @Mutation
     private DELETE(data: Customer) {
-        callFirebaseFunction('delete', data)
+        const callable = functions.httpsCallable('deleteCustomer')
+        callable(data)
     }
 }
 
