@@ -4,6 +4,7 @@ import { User, Unsubscribe } from 'firebase';
 import { auth } from '@/scripts/firebase';
 import ProfileModule from '@/store/profile'
 import CustomersModule from '@/store/customers'
+import OrderModule from '@/store/orders'
 
 @Module({ dynamic: true, store, namespaced: true, name: 'user' })
 class UserModule extends VuexModule {
@@ -46,6 +47,7 @@ class UserModule extends VuexModule {
             this.SET_STATUS(user === null ? null : 'Ready')
             ProfileModule.subscribe()
             CustomersModule.subscribe()
+            OrderModule.subscribe()
         },
             (err) => { console.error(err) },
         )

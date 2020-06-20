@@ -25,7 +25,6 @@ import store from '@/store/index'
 import UserModule from '@/store/user'
 import CustomersModule, { Customer } from '@/store/customers'
 import customerComponent from '@/components/Customer.vue'
-import common from '@/store/common'
 import { Unsubscribe } from 'firebase'
 import { db } from '@/scripts/firebase'
 

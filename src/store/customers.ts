@@ -43,7 +43,7 @@ class CustomersModule extends VuexModule {
             .orderBy('createdAt')
             .onSnapshot((snapshot: any) => {
                 const docs = snapshot.docs.map((doc: any) => {
-                    return Object.assign(doc.data(), { id: doc.id }) as Customer[];
+                    return Object.assign( doc.data(), { id: doc.id }) as Customer[];
                 })
                 this.REFLESH(docs)
             })
