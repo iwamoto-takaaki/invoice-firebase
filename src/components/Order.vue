@@ -1,6 +1,6 @@
 <template lang="pug">
     .order
-        .order-row(v-if="mode === 'show'")
+        .order-row(v-if="displayMode === 'show'")
             .customer-name.order-column
                 .order-value {{ order.customerName }}
             .order-date.order-column
@@ -14,7 +14,7 @@
             .buttons.order-column
                 font-awesome-icon.edit-btn.button(icon="edit" @click="pushedEdit")
                 font-awesome-icon.delete-btn.button(icon="times" @click="pushedRemove")
-        .order-row(v-if="isEditMode")
+        .order-row(v-if="displayMode === 'edit'")
             .customer-name.order-column
                 input(type="text" placeholder="依頼者" v-model="order.customerName" v-on:change="onCustomerInputChanged")
                 select(v-model="order.customerId" v-on:change="onCustomerSelectChanged")
@@ -35,7 +35,7 @@
                 input(type="text" v-model="order.quantity" placeholder="数量")
             .buttons.order-column
                 font-awesome-icon.save-btn.button(icon="save" @click="pushedSave")
-        .updating(v-if="mode === 'uploading'")
+        .updating(v-if="displayMode === 'uploading'")
             p Now Uploading..
 </template>
 
@@ -55,7 +55,6 @@ import 'vue2-datepicker/index.css'
 export default class OrderComponent extends Vue {
     @Prop() public order!: Order
     @Prop() public customers!: Customer[] | null
-    @Prop() public mode!: 'show' | 'edit' | 'new' | 'uploading'
 
     private onCustomerSelectChanged() {
         if (!this.order.customerId) { return }
@@ -84,38 +83,33 @@ export default class OrderComponent extends Vue {
         return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
     }
 
+    private get displayMode(): 'show' | 'edit' | 'uploading' {
+        if (!this.order.mode) { return 'show' }
+        if (this.order.mode === 'show') {return 'show'}
+        if (this.order.mode === 'edit') {return 'edit'}
+        if (this.order.mode === 'new') {return 'edit'}
+        return 'uploading'
+    }
+
     private pushedEdit() {
-        this.mode = 'edit'
+        this.order.mode = 'edit'
     }
 
-    public get isEditMode(): boolean {
-        return this.mode === 'edit' || this.mode === 'new'
-    }
-
-    private changeMode(mode: 'show' | 'edit' | 'new' | 'uploading') {
-        return new Promise((res, rej) => {
-            this.mode = mode
-        })
-    }
-    private async pushedSave() {
+    private pushedSave() {
         if (!this.isVarid) { return }
 
-        if (this.mode === 'new') {
-            await this.changeMode('uploading')
+        if (this.order.mode === 'new') {
+            this.order.mode = 'uploading'
             this.add()
-            await this.changeMode('new')
         } else {
-            await this.changeMode('uploading')
+            this.order.mode = 'uploading'
             this.update()
-            await this.changeMode('show')
         }
     }
 
     private async pushedRemove() {
-        if (!this.isVarid) { return }
-        await this.changeMode('uploading')
+        this.order.mode = 'uploading'
         this.remove()
-        await this.changeMode('show')
     }
 
     @Emit()

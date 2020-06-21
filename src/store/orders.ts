@@ -8,6 +8,7 @@ import { formDateToString } from '@/scripts/helper'
 export interface Order {
     id: string,
     createdAt: any,
+    mode: 'show' | 'edit' | 'new' | 'uploading' | undefined,
     customerId: string,
     customerName: string,
     orderDate: Date,
@@ -18,12 +19,13 @@ export interface Order {
 
 const convertToFirebaseObject = (data: Order): any => {
     const ret: any = Object.assign({}, data)
+    ret.mode = 'show'
     ret.orderDate = formDateToString(ret.orderDate)
     return ret
 }
 
 const convertFromFirebaseObject = (data: any, id: string): Order => {
-    return Object.assign(data, { id , orderDate: new Date(data.orderDate) }) as Order
+    return Object.assign(data, { id , orderDate: new Date(data.orderDate), mode: 'show' }) as Order
 }
 
 @Module({ dynamic: true, store, name: 'orders', namespaced: true })

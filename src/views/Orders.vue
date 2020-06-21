@@ -5,7 +5,6 @@
             v-for="order in orders" 
             :order="order"
             :customers="customers"
-            :mode="'show'"
             :key="order.id"
             v-on:add="add"
             v-on:update="updata"
@@ -15,7 +14,6 @@
         OrderComponent(
             :order="neworder"
             :customers="customers"
-            :mode="'new'"
             v-on:add="add"
             v-on:update="updata"
             v-on:remove="remove"
@@ -54,6 +52,7 @@ export default class OrdersView extends Vue {
         return {
             id: '',
             createdAt: null,
+            mode: 'new',
             customerId: '',
             customerName: '',
             orderDate: new Date(),
@@ -78,12 +77,12 @@ export default class OrdersView extends Vue {
         await ordersModule.add(order)
     }
 
-    private update(order: Order) {
-        ordersModule.update(order)
+    private async update(order: Order) {
+        await ordersModule.update(order)
     }
 
-    private remove(order: Order) {
-        ordersModule.delete(order)
+    private async remove(order: Order) {
+        await ordersModule.delete(order)
     }
 }
 </script>
