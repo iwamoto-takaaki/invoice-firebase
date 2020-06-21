@@ -2,6 +2,10 @@
     section#orders-section
         h1 注文一覧
         OrderComponent(
+            :order="header"
+            :customers="[]"
+        )
+        OrderComponent(
             v-for="order in orders" 
             :order="order"
             :customers="customers"
@@ -37,7 +41,6 @@ import { db } from '@/scripts/firebase'
     },
 })
 export default class OrdersView extends Vue {
-    public neworder: Order = this.initOrder()
 
     public get orders(): Order[] {
         if (ordersModule.data === null) { return [] }
@@ -46,6 +49,23 @@ export default class OrdersView extends Vue {
 
     private get customers(): Customer[] | null {
         return customersModel.data
+    }
+
+    public get authorized(): boolean {
+        return UserModule.authorized
+    }
+
+    public neworder: Order = this.initOrder()
+    private header: Order = {
+        id: '',
+        createdAt: null,
+        mode: 'header',
+        customerId: '',
+        customerName: '',
+        orderDate: new Date(),
+        title: '',
+        unitPrice: 0,
+        quantity: 1,
     }
 
     private initOrder(): Order {
@@ -69,10 +89,6 @@ export default class OrdersView extends Vue {
         }
     }
 
-    public get authorized(): boolean {
-        return UserModule.authorized
-    }
-
     private async add(order: Order) {
         await ordersModule.add(order)
         this.neworder = this.initOrder()
@@ -90,7 +106,6 @@ export default class OrdersView extends Vue {
 
 <style lang="sass">
 @import 'src/sass/style'
-@import 'src/sass/order'
 
 #orders-section
     h1

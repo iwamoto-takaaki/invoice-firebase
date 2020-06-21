@@ -8,7 +8,7 @@ import { formDateToString } from '@/scripts/helper'
 export interface Order {
     id: string,
     createdAt: any,
-    mode: 'show' | 'edit' | 'new' | 'uploading' | undefined,
+    mode: 'show' | 'edit' | 'new' | 'uploading' | 'header' | undefined,
     customerId: string,
     customerName: string,
     orderDate: Date,

@@ -1,5 +1,17 @@
 <template lang="pug">
     .order
+        .order-row(v-if="displayMode === 'header'")
+            .customer-name.order-column
+                .order-value 顧客名
+            .order-date.order-column
+                .order-value 日付
+            .title.order-column
+                .order-value 品目
+            .unit-price.order-column
+                .order-value 単価
+            .quantity.order-column
+                .order-value 数量
+            .buttons.order-column
         .order-row(v-if="displayMode === 'show'")
             .customer-name.order-column
                 .order-value {{ order.customerName }}
@@ -83,11 +95,12 @@ export default class OrderComponent extends Vue {
         return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
     }
 
-    private get displayMode(): 'show' | 'edit' | 'uploading' {
+    private get displayMode(): 'show' | 'edit' | 'uploading' | 'header' {
         if (!this.order.mode) { return 'show' }
-        if (this.order.mode === 'show') {return 'show'}
-        if (this.order.mode === 'edit') {return 'edit'}
-        if (this.order.mode === 'new') {return 'edit'}
+        if (this.order.mode === 'header') { return 'header' }
+        if (this.order.mode === 'show') { return 'show' }
+        if (this.order.mode === 'edit') { return 'edit' }
+        if (this.order.mode === 'new') { return 'edit' }
         return 'uploading'
     }
 
@@ -135,3 +148,55 @@ export default class OrderComponent extends Vue {
     }
 }
 </script>
+
+<style lang="sass">
+@import 'src/sass/style'
+
+.order-row
+    margin-top: 1rem
+    display: grid
+    grid-template-areas: "customer date title unitPrice quantity btn"
+    grid-template-columns: 2fr 2fr 4fr 1fr 1fr 1fr
+    width: 65rem
+    margin-left: auto
+    margin-right: auto
+
+    .order-column
+        margin: .3rem
+        display: grid
+        align-items: center
+
+
+        input, select
+            height: 2rem
+            padding: .3rem
+            top: 50%
+            border: .5px solid #555
+            border-radius: .3rem
+            width: 100%
+
+    .label
+        grid-area: label
+        color: #333
+        padding-right: 1rem
+        text-align: right
+    .customer-name
+        grid-area: customer
+    .order-date
+        grid-area: date
+    .title
+        grid-area: title
+    .unit-price
+        grid-area: unitPrice
+    .quantity
+        grid-area: quantity
+    .buttons
+        grid-area: btn
+
+    .buttons
+        .save-btn, .edit-btn
+            color: $green
+        .delete-btn
+            color: $red
+
+</style>
