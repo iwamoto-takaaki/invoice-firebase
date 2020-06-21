@@ -194,6 +194,7 @@ export default class OrderComponent extends Vue {
         grid-area: btn
 
     .buttons
+        display: flex
         .save-btn, .edit-btn
             color: $green
         .delete-btn
