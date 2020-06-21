@@ -7,7 +7,7 @@
             :customers="customers"
             :key="order.id"
             v-on:add="add"
-            v-on:update="updata"
+            v-on:update="update"
             v-on:remove="remove"
         ) 
         hr
@@ -15,7 +15,7 @@
             :order="neworder"
             :customers="customers"
             v-on:add="add"
-            v-on:update="updata"
+            v-on:update="update"
             v-on:remove="remove"
         )
 </template>
@@ -75,6 +75,7 @@ export default class OrdersView extends Vue {
 
     private async add(order: Order) {
         await ordersModule.add(order)
+        this.neworder = this.initOrder()
     }
 
     private async update(order: Order) {
