@@ -90,6 +90,7 @@ export default class OrdersView extends Vue {
     }
 
     private async add(order: Order) {
+        // TODO:　新規顧客追加 & id割当
         await ordersModule.add(order)
         this.neworder = this.initOrder()
     }

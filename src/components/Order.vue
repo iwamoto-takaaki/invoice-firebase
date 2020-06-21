@@ -141,6 +141,7 @@ export default class OrderComponent extends Vue {
     }
 
     private get isVarid(): boolean {
+        // TODO: 顧客の名前がかぶったらエラー
         // if　(!this.neworder) { return false }
         // if　(!this.neworder.name) { return false }
         // if　(this.neworder.name.trim() === '') { return false }
