@@ -26,7 +26,7 @@
                         v-bind:value="customer.id"
                         ) {{ customer.name }}
             .order-date.order-column
-                datepicker(:value="order.orderDate" format="yyyy/MM/dd" placeholder="依頼日")
+                datepicker(:value="order.orderDate" format="YYYY/MM/DD" placeholder="依頼日")
             .title.order-column
                 input(type="text" v-model="order.title" placeholder="内容")
             .unit-price.order-column
