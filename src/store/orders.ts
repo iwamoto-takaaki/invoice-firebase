@@ -28,29 +28,8 @@ const convertFromFirebaseObject = (data: any, id: string): Order => {
 
 @Module({ dynamic: true, store, name: 'orders', namespaced: true })
 class OrdersModule extends VuexModule {
-    private get collectionRef(): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> {
-        const uid = UserModule.uid
-        return db.collection(`orders/${uid}/list`)
-    }
-
     public data: Order[] | null = null
     public detacher: Unsubscribe | undefined;
-
-    @Mutation
-    public ADD(data: any) {
-        const callable = functions.httpsCallable('addOrder')
-        callable(data)
-    }
-
-    @Mutation
-    public REFLESH(data: Order[] | null) {
-        this.data = data
-    }
-
-    @Mutation
-    public SET_DETACHER(detacher: Unsubscribe) {
-        this.detacher = detacher
-    }
 
     @Action
     public async subscribe() {
@@ -91,6 +70,12 @@ class OrdersModule extends VuexModule {
     }
 
     @Mutation
+    private ADD(data: any) {
+        const callable = functions.httpsCallable('addOrder')
+        callable(data)
+    }
+
+    @Mutation
     private UPDATE(data: any) {
         const callable = functions.httpsCallable('updateOrder')
         callable(data)
@@ -100,6 +85,21 @@ class OrdersModule extends VuexModule {
     private DELETE(data: any) {
         const callable = functions.httpsCallable('deleteOrder')
         callable(data)
+    }
+
+    @Mutation
+    private REFLESH(data: Order[] | null) {
+        this.data = data
+    }
+
+    @Mutation
+    private SET_DETACHER(detacher: Unsubscribe) {
+        this.detacher = detacher
+    }
+
+    private get collectionRef(): firebase.firestore.CollectionReference<firebase.firestore.DocumentData> {
+        const uid = UserModule.uid
+        return db.collection(`orders/${uid}/list`)
     }
 }
 
