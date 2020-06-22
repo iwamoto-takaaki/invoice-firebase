@@ -35,6 +35,11 @@ const routes: RouteConfig[] = [
     name: 'Orders',
     component: () => import('@/views/Orders.vue'),
   },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/404.vue'),
+  },
 ];
 
 const router = new VueRouter({
