@@ -36,6 +36,12 @@ const routes: RouteConfig[] = [
     component: () => import('@/views/Orders.vue'),
   },
   {
+    path: '/invoice/:customerId/:invoiceId',
+    name: 'Invoice',
+    component: () => import('@/views/Invoice.vue'),
+    props: true,
+  },
+  {
     path: '/404',
     name: '404',
     component: () => import('@/views/404.vue'),

@@ -4,6 +4,7 @@
             .content {{ customer.name }} 
             font-awesome-icon.edit-btn.button(icon="edit" @click="isEditMode=true")
             font-awesome-icon.delete-btn.button(icon="times" @click="remove")
+            router-link(v-bind:to="{ name : 'Invoice', params : { customerId:customer.id, invoiceId: 'new' }}") 領収書
         .edit-mode(v-else)
             .input
                 input(type="text" v-model="customer.name")
