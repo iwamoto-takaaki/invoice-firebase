@@ -1,11 +1,21 @@
 <template lang="pug">
     section#invoice-section
         h1 請求書作成
-        .invoice-from from: {{ this.from }}
-        .invoice-to to: {{ this.to }}
-
-        p costomerId: {{ this.customerId }}
-        p invoiceId: {{ this.invoiceId }}
+        .invoice-from from:
+            datepicker(v-model="from" format="YYYY/MM/DD" placeholder="開始日")
+        .invoice-to to: 
+            datepicker(v-model="to" format="YYYY/MM/DD" placeholder="締日")
+        p 請求先: {{ customer.name }}
+        hr
+        InvoiceDetailComponent(:mode="'header'")
+        InvoiceDetailComponent(
+            v-for="order in orders" 
+            :order="order"
+            :customers="customers"
+            :key="order.id"
+            :mode="'detail'"
+            :checked="false"
+        ) 
 </template>
 
 <script lang="ts">
@@ -13,14 +23,15 @@ import Vue from 'vue'
 import { Component, Provide, Prop } from 'vue-property-decorator'
 import store from '@/store/index'
 import UserModule from '@/store/user'
-import ProfileModule, { Profile } from '@/store/profile'
 import ordersModule, { Order } from '@/store/orders'
-import OrderComponent from '@/components/Order.vue'
 import customersModel, { Customer } from '@/store/customers'
-import { Invoice } from '../store/invoices'
+import { Invoice } from '@/store/invoices'
+import InvoiceDetailComponent from '@/components/InvoiceDetail.vue'
+import 'vue2-datepicker/index.css'
 
 @Component({
     components: {
+        InvoiceDetailComponent,
     },
 })
 export default class InvoiceView extends Vue {
@@ -39,10 +50,6 @@ export default class InvoiceView extends Vue {
             --year
         }
         return new Date(year, lastMonth, 1)
-    }
-
-    public get Profile(): Profile | null {
-        return ProfileModule.profile
     }
 
     private get customer(): Customer | undefined {
@@ -95,11 +102,12 @@ export default class InvoiceView extends Vue {
         }
 
         // this.invoice = InvoiceModule.getInvoice(this.invoiceId)
-
+        /*
         if (!this.invoice) {
             this.$router.push('/404')
             return
         }
+        */
     }
 
 }
