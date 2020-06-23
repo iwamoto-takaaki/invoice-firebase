@@ -6,6 +6,7 @@
         .invoice-to to: 
             datepicker(v-model="to" format="YYYY/MM/DD" placeholder="締日")
         p 請求先: {{ customer.name }}
+        P {{ totalPrice }}
         hr
         InvoiceDetailComponent(:mode="'header'")
         InvoiceDetailComponent(
@@ -15,6 +16,9 @@
             :key="order.id"
             :mode="'detail'"
             :checked="false"
+            v-on:check="check"
+            v-on:uncheck="uncheck"
+
         ) 
 </template>
 
@@ -28,6 +32,7 @@ import customersModel, { Customer } from '@/store/customers'
 import { Invoice } from '@/store/invoices'
 import InvoiceDetailComponent from '@/components/InvoiceDetail.vue'
 import 'vue2-datepicker/index.css'
+import OrdersView from './Orders.vue'
 
 @Component({
     components: {
@@ -35,11 +40,6 @@ import 'vue2-datepicker/index.css'
     },
 })
 export default class InvoiceView extends Vue {
-    @Prop() public customerId!: string
-    @Prop() public invoiceId!: string
-    public invoice!: Invoice
-    public from: Date = this.lastMonthFirstDay
-    public to: Date = new Date()
 
     public get lastMonthFirstDay() {
         const today = new Date()
@@ -68,9 +68,29 @@ export default class InvoiceView extends Vue {
         return UserModule.authorized
     }
 
-    private async new() {
+    public get totalPrice(): number {
+        if (this.invoice.orders.length < 1) { return 0 }
+        return this.invoice.orders
+            .map((o) => o.quantity * o.unitPrice)
+            .reduce((acc, cur) => acc + cur)
+    }
+    @Prop() public customerId!: string
+    @Prop() public invoiceId!: string
+    public from: Date = this.lastMonthFirstDay
+    public to: Date = new Date()
+    public invoice: Invoice = this.new()
+
+    public check(order: Order) {
+        this.invoice.orders.push(order)
+    }
+
+    public uncheck(order: Order) {
+        this.invoice.orders = this.invoice.orders.filter((o) => o.id !== order.id)
+    }
+
+    private new() {
         // this.invoice = await invoicesModule.new()
-        this.invoice = {
+        return {
                 id: '',
                 createdAt: null,
                 customer: undefined,
@@ -97,7 +117,7 @@ export default class InvoiceView extends Vue {
         */
 
         if (this.invoiceId === 'new') {
-            this.new()
+            this.invoice = this.new()
             return
         }
 
@@ -109,7 +129,6 @@ export default class InvoiceView extends Vue {
         }
         */
     }
-
 }
 </script>
 
