@@ -6,9 +6,13 @@
         .invoice-to to: 
             datepicker(v-model="to" format="YYYY/MM/DD" placeholder="締日")
         p 請求先: {{ customer.name }}
-        P {{ totalPrice }}
+        P {{ totalPrice }} 
         hr
-        InvoiceDetailComponent(:mode="'header'")
+        InvoiceDetailComponent(
+            :mode="'header'"
+            v-on:check="checkAll"
+            v-on:uncheck="uncheckAll"
+            )
         InvoiceDetailComponent(
             v-for="order in orders" 
             :order="order"
@@ -18,7 +22,7 @@
             :checked="false"
             v-on:check="check"
             v-on:uncheck="uncheck"
-
+            ref="detail"
         ) 
 </template>
 
@@ -86,6 +90,14 @@ export default class InvoiceView extends Vue {
 
     public uncheck(order: Order) {
         this.invoice.orders = this.invoice.orders.filter((o) => o.id !== order.id)
+    }
+
+    public checkAll(order: Order | undefined) {
+        (this.$refs.detail as InvoiceDetailComponent[]).forEach(d => d.checked = true)
+    }
+
+    public uncheckAll(order: Order | undefined) {
+        (this.$refs.detail as InvoiceDetailComponent[]).forEach(d => d.checked = false)
     }
 
     private new() {

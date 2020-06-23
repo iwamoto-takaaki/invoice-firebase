@@ -2,7 +2,7 @@
     .order
         .order-row(v-if="mode === 'header'")
             .buttons.order-column
-                .order-value 請求
+                input(type="checkbox"  v-model="checked" @change="pushedCheckBox")
             .customer-name.order-column
                 .order-value 顧客名
             .order-date.order-column
@@ -64,12 +64,12 @@ export default class InvoiceDetailComponent extends Vue {
     }
 
     @Emit()
-    private check() {
+    public check() {
         return this.order
     }
 
     @Emit()
-    private uncheck() {
+    public uncheck() {
         return this.order
     }
 }
