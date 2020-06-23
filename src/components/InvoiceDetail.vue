@@ -46,22 +46,15 @@ import 'vue2-datepicker/index.css'
     },
 })
 export default class InvoiceDetailComponent extends Vue {
-    @Prop() public order!: Order
-    @Prop() public mode!: 'header' | 'detail'
-    @Prop() public checked!: boolean
-
-    private pushedCheckBox() {
-        if (this.checked) {
-            this.check()
-        } else {
-            this.uncheck()
-        }
-    }
 
     private get orderDate(): string {
         const date = this.order.orderDate
         return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
     }
+    @Prop() public order!: Order
+    @Prop() public mode!: 'header' | 'detail'
+    @Prop() public checked!: boolean
+    @Prop() public order!: Order
 
     @Emit()
     public check() {
@@ -71,6 +64,14 @@ export default class InvoiceDetailComponent extends Vue {
     @Emit()
     public uncheck() {
         return this.order
+    }
+
+    private pushedCheckBox() {
+        if (this.checked) {
+            this.check()
+        } else {
+            this.uncheck()
+        }
     }
 }
 </script>

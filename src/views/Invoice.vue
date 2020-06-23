@@ -93,11 +93,11 @@ export default class InvoiceView extends Vue {
     }
 
     public checkAll(order: Order | undefined) {
-        (this.$refs.detail as InvoiceDetailComponent[]).forEach(d => d.checked = true)
+        (this.$refs.detail as InvoiceDetailComponent[]).forEach((d) => d.checked = true)
     }
 
     public uncheckAll(order: Order | undefined) {
-        (this.$refs.detail as InvoiceDetailComponent[]).forEach(d => d.checked = false)
+        (this.$refs.detail as InvoiceDetailComponent[]).forEach((d) => d.checked = false)
     }
 
     private new() {
