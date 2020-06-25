@@ -2,7 +2,6 @@
     .order
         .order-row(v-if="mode === 'header'")
             .buttons.order-column
-                input(type="checkbox"  v-model="checked" @change="pushedCheckBox")
             .customer-name.order-column
                 .order-value 顧客名
             .order-date.order-column
@@ -54,7 +53,6 @@ export default class InvoiceDetailComponent extends Vue {
     @Prop() public order!: Order
     @Prop() public mode!: 'header' | 'detail'
     @Prop() public checked!: boolean
-    @Prop() public order!: Order
 
     @Emit()
     public check() {
@@ -66,7 +64,7 @@ export default class InvoiceDetailComponent extends Vue {
         return this.order
     }
 
-    private pushedCheckBox() {
+    public pushedCheckBox() {
         if (this.checked) {
             this.check()
         } else {
