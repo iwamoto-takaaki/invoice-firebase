@@ -1,14 +1,26 @@
 <template lang="pug">
     section#invoice-section
         h1 請求書作成
-        .invoice-from from:
-            datepicker(v-model="from" format="YYYY/MM/DD" placeholder="開始日")
-        .invoice-to to: 
-            datepicker(v-model="to" format="YYYY/MM/DD" placeholder="締日")
-        p 請求先: {{ customer.name }}
-        P {{ totalPrice }} 
-        P {{ invoice.taxrate * 100 + "%" }} 
-        P {{ Math.floor(invoice.taxrate * totalPrice) + totalPrice }} 
+        h4 請求期間:
+        .row
+            .invoice-from
+                datepicker(v-model="from" format="YYYY/MM/DD" placeholder="開始日")
+            p 〜
+            .invoice-to 
+                datepicker(v-model="to" format="YYYY/MM/DD" placeholder="締日")
+        h4 請求先:
+        .row
+            P {{ customer.name }}
+            
+        h4 請求額:
+        .row
+            .invoice-totalPrice
+                P 税抜: {{ totalPrice }} 円
+            .invoice-taxrate
+                input(type="number" v-model:number="invoice.taxrate") 
+                |   %
+            .invoice-tax-inculuded
+                p 税込:　{{ Math.floor(invoice.taxrate * totalPrice / 100) + totalPrice }} 円
         hr
         InvoiceDetailComponent(
             :mode="'header'"
@@ -35,12 +47,14 @@ import ordersModule, { Order } from '@/store/orders'
 import customersModel, { Customer } from '@/store/customers'
 import { Invoice } from '@/store/invoices'
 import InvoiceDetailComponent from '@/components/InvoiceDetail.vue'
+import Datepicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'
 import OrdersView from './Orders.vue'
 
 @Component({
     components: {
         InvoiceDetailComponent,
+        Datepicker,
     },
 })
 export default class InvoiceView extends Vue {
@@ -103,7 +117,7 @@ export default class InvoiceView extends Vue {
                 orders: [],
                 issueDate: new Date(),
                 dueDate: new Date(),
-                taxrate: 0.10,
+                taxrate: 10,
                 totalPrice: 0,
         }
     }
@@ -140,8 +154,30 @@ export default class InvoiceView extends Vue {
 <style lang="sass">
 @import 'src/sass/style'
 
-#orders-section
+#invoice-section
     h1
         margin-top: 1rem
+    h4
+        margin-top: 1rem
+    .row
+        margin-top: 0.5rem
+        display: flex
+        flex-direction: row
+        justify-content: center
 
+        p
+            display: block
+            margin-top: auto
+            margin-bottom: auto
+            padding: 0 1rem
+
+        .invoice-totalPrice, .invoice-tax-inculuded
+            P
+                width: 8rem
+                font-weight: bold
+
+        .invoice-taxrate
+            input
+                width: 3rem
+        
 </style>

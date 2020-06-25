@@ -39,10 +39,10 @@ export default class MessageCardComponent extends Vue {
 
 .customer-row
     .normal-mode, .edit-mode 
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
+        display: flex
+        flex-direction: row
+        justify-content: center
+        align-items: center
 
         .content, .button
             padding: 0.5rem 1rem;
