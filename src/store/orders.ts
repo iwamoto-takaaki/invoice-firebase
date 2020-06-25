@@ -3,7 +3,7 @@ import store from '@/store/index'
 import UserModule from '@/store/user'
 import { Unsubscribe } from 'firebase'
 import { db, functions } from '@/scripts/firebase'
-import { formDateToString } from '@/scripts/helper'
+import { fromDateToString } from '@/scripts/helper'
 
 export interface Order {
     id: string,
@@ -20,7 +20,7 @@ export interface Order {
 const convertToFirebaseObject = (data: Order): any => {
     const ret: any = Object.assign({}, data)
     ret.mode = 'show'
-    ret.orderDate = formDateToString(ret.orderDate)
+    ret.orderDate = fromDateToString(ret.orderDate)
     return ret
 }
 
@@ -69,6 +69,11 @@ class OrdersModule extends VuexModule {
     @Action
     public async delete(data: Order) {
         await this.DELETE(convertToFirebaseObject(data))
+    }
+
+    @Action
+    public getOrder(id: string): Order | undefined {
+        return this.data?.find((o) => o.id === id)
     }
 
     @Mutation
