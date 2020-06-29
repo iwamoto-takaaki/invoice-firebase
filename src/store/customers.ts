@@ -73,12 +73,6 @@ class CustomersModule extends VuexModule {
         await this.DELETE(data)
     }
 
-    @Action
-    public getCustomer(customerId: string): Customer | undefined {
-        if (!this.data) { return undefined }
-        return this.data.find((d) => d.id === customerId)
-    }
-
     @Mutation
     private UPDATE(data: Customer) {
         const callable = functions.httpsCallable('updateCustomer')
@@ -92,4 +86,10 @@ class CustomersModule extends VuexModule {
     }
 }
 
-export default getModule(CustomersModule)
+const module = getModule(CustomersModule)
+export default module
+
+export function getCustomer(custmerId: string): Customer | undefined {
+    if (!module.data) { return }
+    return module.data.find((c) => c.id === custmerId)
+}

@@ -4,6 +4,7 @@ import { User, Unsubscribe } from 'firebase';
 import { auth } from '@/scripts/firebase';
 import ProfileModule from '@/store/profile'
 import CustomersModule from '@/store/customers'
+import InvoicesModule from '@/store/invoices'
 import OrderModule from '@/store/orders'
 
 @Module({ dynamic: true, store, namespaced: true, name: 'user' })
@@ -48,6 +49,7 @@ class UserModule extends VuexModule {
             ProfileModule.subscribe()
             CustomersModule.subscribe()
             OrderModule.subscribe()
+            InvoicesModule.subscribe()
         },
             (err) => { console.error(err) },
         )
@@ -59,7 +61,11 @@ class UserModule extends VuexModule {
     public unsubscribe() {
         if (this.detacher) {
             this.detacher();
-          }
+            ProfileModule.unsubscribe()
+            CustomersModule.unsubscribe()
+            OrderModule.unsubscribe()
+            InvoicesModule.subscribe()
+        }
     }
 
     @Mutation

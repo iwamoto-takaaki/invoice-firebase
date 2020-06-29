@@ -73,7 +73,8 @@ class OrdersModule extends VuexModule {
 
     @Action
     public getOrder(id: string): Order | undefined {
-        return this.data?.find((o) => o.id === id)
+        if (!this.data) { return undefined }
+        return this.data.find((o) => o.id === id)
     }
 
     @Mutation
