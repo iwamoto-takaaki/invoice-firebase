@@ -4,7 +4,10 @@
             .content {{ customer.name }} 
             font-awesome-icon.edit-btn.button(icon="edit" @click="isEditMode=true")
             font-awesome-icon.delete-btn.button(icon="times" @click="remove")
-            router-link(v-bind:to="{ name : 'Invoice', params : { customerId:customer.id, invoiceId: 'new' }}") 領収書
+            P 領収書: 
+                router-link(:to="{ name : 'Invoices', params : { customerId: customer.id　}}") 一覧
+                |  | 
+                router-link(:to="{ name : 'Invoice', params : { customerId: customer.id, invoiceId: 'new'　}}") 新規
         .edit-mode(v-else)
             .input
                 input(type="text" v-model="customer.name")

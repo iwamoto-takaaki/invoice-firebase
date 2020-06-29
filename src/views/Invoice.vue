@@ -22,30 +22,34 @@
             .invoice-tax-inculuded
                 p 税込:　{{ Math.floor(invoice.taxrate * totalPrice / 100) + totalPrice }} 円
         hr
-        InvoiceDetailComponent(
-            :mode="'header'"
+        .display(v-if="false")
+            InvoiceDetailComponent(
+                :mode="'header'"
+                )
+            InvoiceDetailComponent(
+                v-for="order in orders" 
+                :order="order"
+                :customers="customers"
+                :key="order.id"
+                :mode="'detail'"
+                :checked="false"
+                v-on:check="check"
+                v-on:uncheck="uncheck"
+                ref="detail"
             )
-        InvoiceDetailComponent(
-            v-for="order in orders" 
-            :order="order"
-            :customers="customers"
-            :key="order.id"
-            :mode="'detail'"
-            :checked="false"
-            v-on:check="check"
-            v-on:uncheck="uncheck"
-            ref="detail"
-        ) 
+        .nothing(v-else)
+            p order is nothing 
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Provide, Prop } from 'vue-property-decorator'
 import store from '@/store/index'
+import router from '@/router/index'
 import UserModule from '@/store/user'
 import ordersModule, { Order } from '@/store/orders'
-import customersModel, { Customer } from '@/store/customers'
-import { Invoice } from '@/store/invoices'
+import customersModel, { Customer, getCustomer } from '@/store/customers'
+import InvoicesModule, { Invoice } from '@/store/invoices'
 import InvoiceDetailComponent from '@/components/InvoiceDetail.vue'
 import Datepicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'
@@ -70,13 +74,8 @@ export default class InvoiceView extends Vue {
         return new Date(year, lastMonth, 1)
     }
 
-    private get customer(): Customer | undefined {
-        if (!customersModel.data) { return undefined }
-        return customersModel.data.find((d) => d.id === this.customerId)
-    }
-
-    public get orders(): Order[] {
-        if (ordersModule.data === null) { return [] }
+    public get orders(): Order[]| undefined {
+        if (!ordersModule.data) { return [] }
         return ordersModule.data
             .filter((o) => o.customerId === this.customerId)
             .filter((o) => this.from <= o.orderDate && o.orderDate <= this.to)
@@ -96,7 +95,11 @@ export default class InvoiceView extends Vue {
     @Prop() public invoiceId!: string
     public from: Date = this.lastMonthFirstDay
     public to: Date = new Date()
-    public invoice: Invoice = this.new()
+    public invoice!: Invoice
+
+    public get customer(): Customer | undefined {
+        return getCustomer(this.customerId)
+    }
 
     public check(order: Order) {
         this.invoice.orders = this.invoice.orders.filter((o) => o.id !== order.id)
@@ -107,19 +110,25 @@ export default class InvoiceView extends Vue {
         this.invoice.orders = this.invoice.orders.filter((o) => o.id !== order.id)
     }
 
-    private new() {
-        // this.invoice = await invoicesModule.new()
-        return {
-                id: '',
-                createdAt: null,
-                customer: undefined,
-                title: '',
-                orders: [],
-                issueDate: new Date(),
-                dueDate: new Date(),
-                taxrate: 10,
-                totalPrice: 0,
+    private async new() {
+        if (!this.customer) {
+            this.$router.push('/')
+            return
         }
+
+        const id = await InvoicesModule.newInvoke(this.customer)
+
+        // if (!id) {
+        //     this.$router.push('/')
+        //     return;
+        // }
+
+        if (!id) {
+            // router.push({name: 'Customers'})
+            return
+        }
+
+        router.push({ name: 'Invoice', params: { customerId: this.customerId, invoiceId: id } })
     }
 
     private mounted() {
@@ -136,7 +145,7 @@ export default class InvoiceView extends Vue {
         */
 
         if (this.invoiceId === 'new') {
-            this.invoice = this.new()
+            this.new()
             return
         }
 
