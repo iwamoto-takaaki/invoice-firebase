@@ -2,6 +2,15 @@
     section#invoices-section
         h1 注文一覧
         invoiceComponent(
+            :mode="'header'"
+            :invoice="undefined"
+        )
+        invoiceComponent(
+            v-for="invoice in invoices"
+            :key="invoice.id"
+            :mode="'show'"
+            :invoice="invoice"
+            :edit="edit"
         )
         hr
         .button
