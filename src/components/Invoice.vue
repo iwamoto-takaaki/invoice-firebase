@@ -12,8 +12,8 @@
         .invoice-totalprice.field {{ invoice.totalprice }}
         .invoice-due.field {{ dueDate }}
         .invoice-buttons.field
-            font-awesome-icon.edit-btn.button(icon="edit" @click="pushedEdit")
-    .in
+            router-link(:to="{ name : 'Invoice', params : { customerId: invoice.customer.id, invoiceId: invoice.id　}}")
+                font-awesome-icon.edit-btn.button(icon="edit")
 </template>
 
 <script lang="ts">
@@ -39,10 +39,6 @@ export default class InvoiceComponent extends Vue {
     public get dueDate(): string | null {
         if (!this.invoice) { return '' }
         return fromDateToString(this.invoice.dueDate)
-    }
-
-    public pushEdit() {
-        this.edit()
     }
 
     @Emit()

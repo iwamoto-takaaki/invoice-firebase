@@ -10,7 +10,6 @@
             :key="invoice.id"
             :mode="'show'"
             :invoice="invoice"
-            :edit="edit"
         )
         hr
         .button
@@ -54,6 +53,10 @@ export default class InvoicesView extends Vue {
             this.$router.push('/')
             return
         }
+    }
+
+    private edit(invoice: Invoice) {
+        this.$router.push({name: 'Invoice', params: { customerId: this.customerId, invoiceId: invoice.id } })
     }
 
     private async add(invoice: Invoice) {
