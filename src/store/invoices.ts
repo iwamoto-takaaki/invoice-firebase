@@ -111,12 +111,6 @@ class InvoicesModule extends VuexModule {
         return id
     }
 
-    @Action
-    public getInvoice(id: string): Invoice | undefined {
-        if (!this.data) { return undefined }
-        return this.data?.find((i) => i.id === id)
-    }
-
     @Mutation
     private async ADD(data: any): Promise<string | undefined> {
         let id: string | undefined
@@ -148,4 +142,12 @@ class InvoicesModule extends VuexModule {
     }
 }
 
-export default getModule(InvoicesModule)
+const invoicesModule = getModule(InvoicesModule)
+
+export default invoicesModule
+
+export function getInvoice(id: string): Invoice | undefined {
+    if (!invoicesModule.data) { return undefined }
+    return invoicesModule.data.find((i) => i.id === id)
+}
+

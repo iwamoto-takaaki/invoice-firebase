@@ -22,7 +22,7 @@
             .invoice-tax-inculuded
                 p 税込:　{{ Math.floor(invoice.taxrate * totalPrice / 100) + totalPrice }} 円
         hr
-        .display(v-if="false")
+        .display(v-if="existOrder")
             InvoiceDetailComponent(
                 :mode="'header'"
                 )
@@ -49,7 +49,7 @@ import router from '@/router/index'
 import UserModule from '@/store/user'
 import ordersModule, { Order } from '@/store/orders'
 import customersModel, { Customer, getCustomer } from '@/store/customers'
-import InvoicesModule, { Invoice } from '@/store/invoices'
+import InvoicesModule, { Invoice, getInvoice } from '@/store/invoices'
 import InvoiceDetailComponent from '@/components/InvoiceDetail.vue'
 import Datepicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'
@@ -81,11 +81,17 @@ export default class InvoiceView extends Vue {
             .filter((o) => this.from <= o.orderDate && o.orderDate <= this.to)
     }
 
+    public get existOrder(): boolean {
+        if (!this.orders) { return false }
+        return 0 < this.orders.length
+    }
+
     public get authorized(): boolean {
         return UserModule.authorized
     }
 
     public get totalPrice(): number {
+        if (!this.invoice) { return 0 }
         if (this.invoice.orders.length < 1) { return 0 }
         return this.invoice.orders
             .map((o) => o.quantity * o.unitPrice)
@@ -95,19 +101,26 @@ export default class InvoiceView extends Vue {
     @Prop() public invoiceId!: string
     public from: Date = this.lastMonthFirstDay
     public to: Date = new Date()
-    public invoice!: Invoice
 
     public get customer(): Customer | undefined {
         return getCustomer(this.customerId)
     }
 
     public check(order: Order) {
+        if (!this.invoice) { return }
         this.invoice.orders = this.invoice.orders.filter((o) => o.id !== order.id)
         this.invoice.orders.push(order)
+        InvoicesModule.update(this.invoice)
     }
 
     public uncheck(order: Order) {
+        if (!this.invoice) { return }
         this.invoice.orders = this.invoice.orders.filter((o) => o.id !== order.id)
+        InvoicesModule.update(this.invoice)
+    }
+
+    public get invoice(): Invoice | undefined {
+        return getInvoice(this.invoiceId)
     }
 
     private async new() {
@@ -149,13 +162,10 @@ export default class InvoiceView extends Vue {
             return
         }
 
-        // this.invoice = InvoiceModule.getInvoice(this.invoiceId)
-        /*
         if (!this.invoice) {
             this.$router.push('/404')
             return
         }
-        */
     }
 }
 </script>
