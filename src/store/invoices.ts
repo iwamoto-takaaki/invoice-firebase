@@ -2,7 +2,7 @@ import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-dec
 import store from '@/store/index'
 import UserModule from '@/store/user'
 import CustomersModule, { Customer, getCustomer } from '@/store/customers'
-import OrdersModule, { Order } from '@/store/orders'
+import OrdersModule, { Order, getOrder } from '@/store/orders'
 import { Unsubscribe } from 'firebase'
 import { db, functions } from '@/scripts/firebase'
 import { fromDateToString } from '@/scripts/helper'
@@ -39,7 +39,7 @@ const convertFromFirebaseObject = (data: any, id: string): Invoice => {
         createdAt: data.createdAt,
         customer: getCustomer(data.customer as string),
         title: data.title,
-        orders: data.orderIds.map((orderId: string) => OrdersModule.getOrder(orderId)),
+        orders: data.orderIds.map((orderId: string) => getOrder(orderId)),
         issueDate: new Date(data.issueDate),
         dueDate: new Date(data.dueDate),
         taxrate: data.taxrate,

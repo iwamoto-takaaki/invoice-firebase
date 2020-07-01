@@ -71,12 +71,6 @@ class OrdersModule extends VuexModule {
         await this.DELETE(convertToFirebaseObject(data))
     }
 
-    @Action
-    public getOrder(id: string): Order | undefined {
-        if (!this.data) { return undefined }
-        return this.data.find((o) => o.id === id)
-    }
-
     @Mutation
     private ADD(data: any) {
         const callable = functions.httpsCallable('addOrder')
@@ -111,4 +105,11 @@ class OrdersModule extends VuexModule {
     }
 }
 
-export default getModule(OrdersModule)
+const orderModule = getModule(OrdersModule)
+export default orderModule
+
+export function getOrder(id: string): Order | undefined {
+    if (!orderModule.data) { return undefined }
+    return orderModule.data.find((o) => o.id === id)
+}
+
