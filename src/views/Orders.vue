@@ -2,13 +2,13 @@
     section#orders-section
         h1 注文一覧
         OrderComponent(
-            :order="header"
+            :order="undefined"
             :customers="[]"
         )
         OrderComponent(
-            v-for="order in orders" 
+            v-for="order in state.orders" 
             :order="order"
-            :customers="customers"
+            :customers="state.customers"
             :key="order.id"
             v-on:add="add"
             v-on:update="update"
@@ -16,8 +16,8 @@
         ) 
         hr
         OrderComponent(
-            :order="neworder"
-            :customers="customers"
+            :order="state.newOrder"
+            :customers="state.customers"
             v-on:add="add"
             v-on:update="update"
             v-on:remove="remove"
@@ -25,84 +25,54 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Component, Provide, Prop } from 'vue-property-decorator'
-import store from '@/store/index'
+import { reactive, onMounted, onUnmounted, defineComponent } from '@vue/composition-api'
+import VueRouter from 'vue-router'
+import firebase from 'firebase'
+import { getOrderCollection, Order, initOrder } from '@/scripts/modules/orders'
+import { getCustomerCollection, Customer } from '@/scripts/modules/customers'
 import UserModule from '@/store/user'
-import ordersModule, { Order } from '@/store/orders'
 import OrderComponent from '@/components/Order.vue'
-import customersModel, { Customer } from '@/store/customers'
-import { Unsubscribe } from 'firebase'
-import { db } from '@/scripts/firebase'
 
-@Component({
+export default defineComponent({
     components: {
         OrderComponent,
     },
-})
-export default class OrdersView extends Vue {
+    setup() {
+        const state = reactive<{
+            orders: Order[] | undefined,
+            customers: Customer[] | undefined,
+            newOrder: Order,
+        }> ({
+            orders: undefined,
+            customers: undefined,
+            newOrder: initOrder(),
+        })
 
-    public get orders(): Order[] {
-        if (ordersModule.data === null) { return [] }
-        return ordersModule.data
-    }
+        const router = new VueRouter()
 
-    private get customers(): Customer[] | null {
-        return customersModel.data
-    }
+        const uid = UserModule.uid
 
-    public get authorized(): boolean {
-        return UserModule.authorized
-    }
-
-    public neworder: Order = this.initOrder()
-    private header: Order = {
-        id: '',
-        createdAt: null,
-        mode: 'header',
-        customerId: '',
-        customerName: '',
-        orderDate: new Date(),
-        title: '',
-        unitPrice: 0,
-        quantity: 1,
-    }
-
-    private initOrder(): Order {
-        return {
-            id: '',
-            createdAt: null,
-            mode: 'new',
-            customerId: '',
-            customerName: '',
-            orderDate: new Date(),
-            title: '',
-            unitPrice: 0,
-            quantity: 1,
-            }
-    }
-
-    private mounted() {
-        if (!this.authorized) {
-            this.$router.push('/')
+        if (!uid) {
+            router.push('/')
             return
         }
-    }
 
-    private async add(order: Order) {
-        // TODO:　新規顧客追加 & id割当
-        await ordersModule.add(order)
-        this.neworder = this.initOrder()
-    }
+        const orders = getOrderCollection(uid)
+        const customers = getCustomerCollection(uid)
 
-    private async update(order: Order) {
-        await ordersModule.update(order)
-    }
+        onMounted(() => {
+            orders.subscribe((snapshot) => state.orders = snapshot)
+            customers.subscribe((snapshot) => state.customers = snapshot)
+        })
 
-    private async remove(order: Order) {
-        await ordersModule.delete(order)
-    }
-}
+        onUnmounted(() => {
+            orders.unsubscribe()
+            customers.unsubscribe()
+        })
+
+        return { state }
+    },
+})
 </script>
 
 <style lang="sass">

@@ -54,8 +54,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop, Emit } from 'vue-property-decorator'
-import { Order } from '@/store/orders'
-import { Customer } from '@/store/customers'
+import { Order } from '@/scripts/modules/orders'
+import { Customer } from '@/scripts/modules/customers'
 import Datepicker from 'vue2-datepicker'
 import 'vue2-datepicker/index.css'
 
@@ -65,10 +65,11 @@ import 'vue2-datepicker/index.css'
     },
 })
 export default class OrderComponent extends Vue {
-    @Prop() public order!: Order
+    @Prop() public order!: Order　| undefined
     @Prop() public customers!: Customer[] | null
 
     private onCustomerSelectChanged() {
+        if (!this.order) { return }
         if (!this.order.customerId) { return }
         if (!this.customers) { return }
         for (const customer of this.customers) {
@@ -79,6 +80,7 @@ export default class OrderComponent extends Vue {
     }
 
     private onCustomerInputChanged() {
+        if (!this.order) { return }
         if (!this.order.customerName) { return }
         if (!this.customers) { return }
         for (const customer of this.customers) {
@@ -91,11 +93,13 @@ export default class OrderComponent extends Vue {
     }
 
     private get orderDate(): string {
+        if (!this.order) { return '' }
         const date = this.order.orderDate
         return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
     }
 
     private get displayMode(): 'show' | 'edit' | 'uploading' | 'header' {
+        if (!this.order) { return 'header' }
         if (!this.order.mode) { return 'show' }
         if (this.order.mode === 'header') { return 'header' }
         if (this.order.mode === 'show') { return 'show' }
@@ -105,10 +109,12 @@ export default class OrderComponent extends Vue {
     }
 
     private pushedEdit() {
+        if (!this.order) { return }
         this.order.mode = 'edit'
     }
 
     private pushedSave() {
+        if (!this.order) { return }
         if (!this.isVarid) { return }
 
         if (this.order.mode === 'new') {
@@ -121,6 +127,7 @@ export default class OrderComponent extends Vue {
     }
 
     private async pushedRemove() {
+        if (!this.order) { return }
         this.order.mode = 'uploading'
         this.remove()
     }
