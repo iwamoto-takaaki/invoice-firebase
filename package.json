@@ -12,6 +12,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/vue-fontawesome": "^0.1.9",
     "@types/vue2-datepicker": "^3.3.0",
+    "@vue/composition-api": "^1.0.0-beta.1",
     "core-js": "^3.6.5",
     "firebaseui": "^4.5.1",
     "vue": "^2.6.11",

@@ -2,92 +2,88 @@
     section#customers-section
         h1 顧客一覧
         customerComponent(
-            v-for="customer in customers" 
+            v-for="customer in state.customers" 
             :customer="customer"
             :key="customer.id"
             v-on:update="update"
             v-on:remove="remove"
             )
-        .field(v-if="!newCustomerUploading")
+        .field(v-if="!state.newCustomerUploading")
             .label
                 label 登録: 
             .input
-                input(type="text" v-model="newCustomer.name" placeholder="顧客名")
-                font-awesome-icon.save-btn.button(icon="save" @click="add")
+                input(type="text" v-model="state.newCustomer.name" placeholder="顧客名")
+                font-awesome-icon.save-btn.button(icon="save" @click="pushedSave")
         .updating(v-else)
             p Now Uploading...
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Component, Provide, Prop } from 'vue-property-decorator'
-import store from '@/store/index'
-import UserModule from '@/store/user'
-import CustomersModule, { Customer } from '@/store/customers'
+import { reactive, onMounted, onUnmounted, defineComponent } from '@vue/composition-api'
+import VueRouter from 'vue-router'
+import firebase from 'firebase'
+import { getCustomerCollection, Customer } from '@/scripts/modules/customers'
 import customerComponent from '@/components/Customer.vue'
-import { Unsubscribe } from 'firebase'
-import { db } from '@/scripts/firebase'
+import UserModule from '@/store/user'
+import { Timestamp } from '@google-cloud/firestore'
 
-@Component({
+export default defineComponent({
     components: {
         customerComponent,
     },
+    setup() {
+        const newcustomer = (): Customer => {
+            return {
+            id: '',
+            createdAt: firebase.firestore.Timestamp.now(),
+            name: '',
+            }
+        }
+
+
+        const state = reactive<{
+            customers: Customer[] | undefined,
+            newCustomer: Customer,
+            newCustomerUploading: boolean,
+            uid: string,
+            dbpath: string,
+        }> ({
+            customers: undefined,
+            newCustomer: newcustomer(),
+            newCustomerUploading: false,
+            uid: '',
+            dbpath: '',
+        })
+
+        const uid = UserModule.uid
+        if (!uid) {
+            return { state }
+        }
+        state.uid = uid
+        const collection = getCustomerCollection(uid)
+        state.dbpath = collection.dbpath
+
+        onMounted(() => collection.subscribe((snapshot: Customer[]) => state.customers = snapshot))
+
+        onUnmounted(() => collection.unsubscribe())
+
+        const add = async (customer: Customer): Promise<any> => await collection.add(customer)
+        const update = async (customer: Customer): Promise<void> => await collection.update(customer)
+        const remove = async (customer: Customer): Promise<void> => await collection.delete(customer)
+
+        const pushedSave = async () => {
+            try {
+                state.newCustomerUploading = true
+                await add(state.newCustomer)
+                state.newCustomer = newcustomer()
+            } finally {
+                state.newCustomerUploading = false
+            }
+        }
+
+        return { state, add, update, remove, pushedSave }
+    },
 })
-export default class CustomersView extends Vue {
-    public newCustomer: Customer = this.initCustomer();
-    public newCustomerUploading: boolean = false;
-
-    private initCustomer(): Customer {
-        return {id: '', name: ''}
-    }
-
-    private mounted() {
-        if (!this.authorized) {
-            this.$router.push('/')
-            return
-        }
-    }
-
-    public get authorized(): boolean {
-        return UserModule.authorized
-    }
-
-    private get customers(): Customer[] {
-        if (!CustomersModule.data) { return [] }
-        return CustomersModule.data
-    }
-
-    private async add() {
-        try {
-            if (!this.idVeridNewCustomer) { return }
-
-            this.newCustomerUploading = true
-            await CustomersModule.add({
-                id: '',
-                name: this.newCustomer.name.trim(),
-            })
-
-            this.newCustomer = this.initCustomer()
-        } finally {
-            this.newCustomerUploading = false
-        }
-    }
-
-    private update(customer: Customer) {
-        CustomersModule.update(customer)
-    }
-
-    private remove(customer: Customer) {
-        CustomersModule.delete(customer)
-    }
-
-    private get idVeridNewCustomer(): boolean {
-        if　(!this.newCustomer) { return false }
-        if　(!this.newCustomer.name) { return false }
-        if　(this.newCustomer.name.trim() === '') { return false }
-        return true;
-    }
-}
 </script>
 
 <style lang="sass">
