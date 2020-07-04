@@ -58,13 +58,13 @@ export class FirebaseCollection<T extends FirebaseObject>
     }
 
     public subscribe(onSnapshot: (snapshot: T[]) => void , orderBy: string = 'createdAt') {
-        super.detacher = super.reference
+        this.detacher = this.reference
             .orderBy(orderBy)
             .onSnapshot((snapshot: any) => {
                 onSnapshot(snapshot.docs.map((doc: any) => {
-                    return super.toVueObject(doc.id, doc.data())
+                    return this.toVueObject(doc.id, doc.data())
                 }) as T[])
-            });
+            })
     }
 }
 
@@ -78,10 +78,10 @@ export class FirebaseDocument<T extends FirebaseObject>
         super(className, db.doc(dbpath), toFirebaseObject, toVueObject)
     }
 
-    public subscribe(getSnapshot: (snapshot: T) => void) {
+    public subscribe(onSnapshot: (snapshot: T) => void) {
         super.detacher = (super.reference as firebase.firestore.DocumentReference)
             .onSnapshot((doc: any) => {
-                getSnapshot(super.toVueObject(doc.id, doc.data()) as T)
+                onSnapshot(super.toVueObject(doc.id, doc.data()) as T)
             })
     }
 }
