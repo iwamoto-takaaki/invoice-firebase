@@ -27,7 +27,6 @@
 <script lang="ts">
 import { reactive, onMounted, onUnmounted, defineComponent } from '@vue/composition-api'
 import VueRouter from 'vue-router'
-import firebase from 'firebase'
 import { getOrderCollection, Order, initOrder } from '@/scripts/modules/orders'
 import { getCustomerCollection, Customer } from '@/scripts/modules/customers'
 import UserModule from '@/store/user'
