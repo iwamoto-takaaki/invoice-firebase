@@ -1,4 +1,4 @@
-import firebaseCollection, { FirebaseObject } from '@/scripts/firestoreCollection';
+import { FirebaseCollection, FirebaseObject, FirebaseDocument } from '@/scripts/firestoreReference'
 import firebase from 'firebase'
 import { fromDateToString } from '@/scripts/helper'
 
@@ -28,33 +28,37 @@ export function initOrder(): Order {
     }
 }
 
+const toFirebaseObject = (order: Order): any => {
+    return {
+        id: order.id,
+        createdAt: order.createdAt,
+        customerId: order.customerId,
+        customerName: order.customerName,
+        orderDate: fromDateToString(order.orderDate),
+        title: order.title,
+        unitPrice: order.unitPrice,
+        quantity: order.quantity,
+    }
+}
+
+const toVueObject = (id: string, data: any): Order => {
+    return {
+        id,
+        createdAt: data.createdAt,
+        mode: 'show',
+        customerId: data.customerId,
+        customerName: data.customerName,
+        orderDate: new Date(data.orderDate),
+        title: data.title,
+        unitPrice: data.unitPrice,
+        quantity: data.quantity,
+    }
+}
+
 export function getOrderCollection(userId: string) {
-    const toFirebaseObject = (order: Order): any => {
-        return {
-            id: order.id,
-            createdAt: order.createdAt,
-            customerId: order.customerId,
-            customerName: order.customerName,
-            orderDate: fromDateToString(order.orderDate),
-            title: order.title,
-            unitPrice: order.unitPrice,
-            quantity: order.quantity,
-        }
-    }
+    return new FirebaseCollection<Order>('Order', `orders/${userId}/list`, toFirebaseObject, toVueObject)
+}
 
-    const toVueObject = (id: string, data: any): Order => {
-        return {
-            id,
-            createdAt: data.createdAt,
-            mode: 'show',
-            customerId: data.customerId,
-            customerName: data.customerName,
-            orderDate: new Date(data.orderDate),
-            title: data.title,
-            unitPrice: data.unitPrice,
-            quantity: data.quantity,
-        }
-    }
-
-    return new firebaseCollection<Order>('Order', `orders/${userId}/list`, toFirebaseObject, toVueObject)
+export function getOrderDodument(userId: string, id: string) {
+    return new FirebaseDocument<Order>('Order', `orders/${userId}/list/${id}`, toFirebaseObject, toVueObject)
 }

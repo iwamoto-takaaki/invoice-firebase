@@ -1,6 +1,7 @@
 <template lang="pug">
     section#customers-section
         h1 顧客一覧
+        p {{ state }}
         customerComponent(
             v-for="customer in state.customers" 
             :customer="customer"
@@ -40,28 +41,22 @@ export default defineComponent({
             }
         }
 
-
         const state = reactive<{
             customers: Customer[] | undefined,
             newCustomer: Customer,
             newCustomerUploading: boolean,
-            uid: string,
-            dbpath: string,
         }> ({
-            customers: undefined,
+            customers: [],
             newCustomer: newcustomer(),
             newCustomerUploading: false,
-            uid: '',
-            dbpath: '',
         })
 
         const uid = UserModule.uid
         if (!uid) {
             return { state }
         }
-        state.uid = uid
+
         const collection = getCustomerCollection(uid)
-        state.dbpath = collection.dbpath
 
         onMounted(() => collection.subscribe((snapshot: Customer[]) => state.customers = snapshot))
 

@@ -1,4 +1,4 @@
-import firebaseCollection, { FirebaseObject } from '@/scripts/firestoreCollection';
+import { FirebaseCollection, FirebaseObject } from '@/scripts/firestoreReference';
 
 export interface Customer extends FirebaseObject {
     id: string,
@@ -23,5 +23,5 @@ export function getCustomerCollection(userId: string) {
         }
     }
 
-    return new firebaseCollection<Customer>('Customer', `customers/${userId}/list`, toFirebaseObject, toVueObject)
+    return new FirebaseCollection<Customer>('Customer', `customers/${userId}/list`, toFirebaseObject, toVueObject)
 }
