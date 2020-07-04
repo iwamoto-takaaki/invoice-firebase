@@ -2,7 +2,6 @@ import store from '@/store/index'
 import { Module, VuexModule, Action, Mutation, getModule, MutationAction } from 'vuex-module-decorators';
 import { User, Unsubscribe } from 'firebase';
 import { auth } from '@/scripts/firebase';
-import ProfileModule from '@/store/profile'
 import CustomersModule from '@/store/customers'
 import InvoicesModule from '@/store/invoices'
 import OrderModule from '@/store/orders'
@@ -46,7 +45,6 @@ class UserModule extends VuexModule {
         const detacher = auth.onAuthStateChanged((user) => {
             this.LOGIN(user)
             this.SET_STATUS(user === null ? null : 'Ready')
-            ProfileModule.subscribe()
             CustomersModule.subscribe()
             OrderModule.subscribe()
             InvoicesModule.subscribe()
@@ -61,7 +59,6 @@ class UserModule extends VuexModule {
     public unsubscribe() {
         if (this.detacher) {
             this.detacher();
-            ProfileModule.unsubscribe()
             CustomersModule.unsubscribe()
             OrderModule.unsubscribe()
             InvoicesModule.subscribe()
