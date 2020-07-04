@@ -11,7 +11,7 @@ export interface Profile extends FirebaseObject {
     account: string,
 }
 
-export function getProfile(userId: string) {
+export function getProfileDocument(userId: string) {
     const toFirebaseObject = (profile: Profile): any => {
         return {
             id: profile.id,
@@ -36,5 +36,5 @@ export function getProfile(userId: string) {
         }
     }
 
-    return new FirebaseDocument<Profile>('Profile', `profiles/${userId}`, toFirebaseObject, toVueObject)
+    return new FirebaseDocument<Profile>('Profile', `profile/${userId}`, toFirebaseObject, toVueObject)
 }

@@ -1,76 +1,70 @@
 <template lang="pug">
     section#profile-section
         h1 請求者の情報
-        form(v-if="this.authorized" @submit.prevent="updateProfile")
+        form(@submit.prevent="update")
             .field
                 .label
                     label 名前:
                 .input
-                    input(type="text" v-model="profile.name" placeholder="名前")
+                    input(type="text" v-model="state.profile.name" placeholder="名前")
             .field
                 .label
                     label 住所:
                 .input
-                    input(type="text" v-model="profile.address" placeholder="住所")
+                    input(type="text" v-model="state.profile.address" placeholder="住所")
             .field
                 .label
                     label e-mail:
                 .input
-                    input(type="text" v-model="profile.email" placeholder="e-mail")
+                    input(type="text" v-model="state.profile.email" placeholder="e-mail")
             .field
                 .label
                     label 電話番号:
                 .input
-                    input(type="text" v-model="profile.phone" placeholder="電話番号")
+                    input(type="text" v-model="state.profile.phone" placeholder="電話番号")
             .field
                 .label
                     label 銀行口座:
                 .input
-                    textarea(v-model="profile.account" placeholder="銀行口座")
+                    textarea(v-model="state.profile.account" placeholder="銀行口座")
             input.submit(type="submit" value="登録")
-        .unauth(v-else)
-            p Loading...
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Component, Provide } from 'vue-property-decorator'
-import store from '@/store/index'
+import { reactive, onMounted, onUnmounted, defineComponent } from '@vue/composition-api'
+import VueRouter from 'vue-router'
+import { Profile, getProfileDocument } from '@/scripts/modules/profile'
 import UserModule from '@/store/user'
-import ProfileModule, { Profile } from '@/store/profile'
-import { Unsubscribe } from 'firebase'
-import { db } from '@/scripts/firebase'
 
-@Component
-export default class ProfileView extends Vue {
-    @Provide()　public profile: Profile | null = null;
-    public created() {
-        if (!this.authorized) {
-            this.$router.push('/')
+export default defineComponent({
+    setup() {
+        const state = reactive<{
+            profile: Profile | undefined,
+        }> ({
+            profile: undefined,
+        })
+
+        const uid = UserModule.uid
+        if (!uid) {
+            const router = new VueRouter()
+            router.push('/')
             return
         }
 
-        if (!ProfileModule.profile) {
-            return
+        const doc = getProfileDocument(uid)
+
+        onMounted(() => { doc.subscribe((snapshot) => state.profile = snapshot) })
+
+        onUnmounted(() => { doc.unsubscribe() })
+
+        const update = () => {
+            if (!state.profile) { return }
+            doc.update(state.profile)
         }
 
-        this.profile = {
-            name: ProfileModule.profile.name,
-            address: ProfileModule.profile.address,
-            email: ProfileModule.profile.email,
-            phone: ProfileModule.profile.phone,
-            account: ProfileModule.profile.account,
-        }
-    }
-
-    public get authorized(): boolean {
-        return UserModule.authorized
-    }
-
-    public updateProfile() {
-        ProfileModule.update(this.profile as Profile);
-    }
-}
+        return { state, update }
+    },
+})
 </script>
 
 <style lang="sass" scoped>

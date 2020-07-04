@@ -79,9 +79,9 @@ export class FirebaseDocument<T extends FirebaseObject>
     }
 
     public subscribe(onSnapshot: (snapshot: T) => void) {
-        super.detacher = (super.reference as firebase.firestore.DocumentReference)
+        this.detacher = this.reference
             .onSnapshot((doc: any) => {
-                onSnapshot(super.toVueObject(doc.id, doc.data()) as T)
+                onSnapshot(this.toVueObject(doc.id, doc.data()) as T)
             })
     }
 }
